@@ -15,7 +15,9 @@ module.exports = (io) => {
     socket.on("send-msg", (data) => {
       const sendUserSocket = onlineUsers.get(data.to);
       if (sendUserSocket) {
-        console.log(`Sending message from ${socket.id} to ${sendUserSocket} (user: ${data.to})`); // Debug log
+        console.log(
+          `Sending message from ${socket.id} to ${sendUserSocket} (user: ${data.to})`
+        ); // Debug log
         io.to(sendUserSocket).emit("msg-recieve", data.msg);
       } else {
         console.log(`User ${data.to} not found or offline.`); // Debug log
@@ -25,7 +27,7 @@ module.exports = (io) => {
     // Peer management for live streaming
     socket.on("register-peer", (peerInfo) => {
       // Simple check to avoid duplicates if needed
-      if (!activePeers.some(p => p.id === socket.id)) {
+      if (!activePeers.some((p) => p.id === socket.id)) {
         const { ip, port } = peerInfo;
         activePeers.push({ id: socket.id, ip, port });
         console.log(`Peer registered: ${ip}:${port} (ID: ${socket.id})`);
@@ -47,9 +49,9 @@ module.exports = (io) => {
       // Filter out the disconnected peer - **THIS REQUIRES activePeers to be 'let'**
       const initialLength = activePeers.length;
       activePeers = activePeers.filter((peer) => peer.id !== socket.id);
-      if(activePeers.length < initialLength) {
-          console.log(`Peer ${socket.id} removed from active peers.`);
-          console.log("Active peers:", activePeers); // Debug log
+      if (activePeers.length < initialLength) {
+        console.log(`Peer ${socket.id} removed from active peers.`);
+        console.log("Active peers:", activePeers); // Debug log
       }
     });
 
@@ -59,6 +61,23 @@ module.exports = (io) => {
       socket.emit("peer-list", peerList);
     });
 
-    // Add more live streaming logic here as needed (e.g., WebRTC signaling)
+    // WebRTC signaling for live streaming
+    socket.on("offer", (offer) => {
+      socket.broadcast.emit("offer", offer); // Broadcast offer to all peers
+    });
+
+    socket.on("answer", (answer) => {
+      socket.broadcast.emit("answer", answer); // Send answer back to streamer
+    });
+
+    socket.on("ice-candidate", (candidate) => {
+      socket.broadcast.emit("ice-candidate", candidate); // Share ICE candidates
+    });
+
+    // Peer registration with tracker
+    socket.on("register-peer", (peerData) => {
+      // Store peer info (e.g., in memory or database)
+      console.log(`Peer registered: ${socket.id}`);
+    });
   });
 };

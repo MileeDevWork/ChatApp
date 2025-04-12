@@ -8,6 +8,7 @@ import ChatContainer from "../components/ChatContainer";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
 
+
 export default function Chat() {
   const navigate = useNavigate();
   const socket = useRef();
@@ -45,9 +46,15 @@ export default function Chat() {
   const handleChatChange = (chat) => {
     setCurrentChat(chat);
   };
+  const goToLiveStreaming = () => {
+    navigate("/live");
+  };
+
   return (
     <>
       <Container>
+        <h2>Chat Room</h2>
+        <LiveButton onClick={goToLiveStreaming}>Live Streaming</LiveButton>
         <div className="container">
           <Contacts contacts={contacts} changeChat={handleChatChange} />
           {currentChat === undefined ? (
@@ -86,3 +93,14 @@ const Container = styled.div`
   }
 `;
 
+const LiveButton = styled.button`
+  background-color: #ff5e57;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  &:hover {
+    background-color: #ff4a43;
+  }
+`;
