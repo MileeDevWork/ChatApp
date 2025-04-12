@@ -5,6 +5,10 @@ const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/messages");
 const app = express();
 const socket = require("socket.io");
+const setupSocket = require('./socket');
+const http = require('http');
+// const server = http.createServer(app); 
+
 require("dotenv").config();
 
 app.use(cors());
@@ -29,9 +33,8 @@ app.get("/ping", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-const server = app.listen(process.env.PORT, () =>
-  console.log(`Server started on ${process.env.PORT}`)
-);
+const server = http.createServer(app);
+
 const io = socket(server, {
   cors: {
     origin: "http://localhost:3000",
@@ -39,17 +42,47 @@ const io = socket(server, {
   },
 });
 
-global.onlineUsers = new Map();
-io.on("connection", (socket) => {
-  global.chatSocket = socket;
-  socket.on("add-user", (userId) => {
-    onlineUsers.set(userId, socket.id);
-  });
+setupSocket(io);
 
-  socket.on("send-msg", (data) => {
-    const sendUserSocket = onlineUsers.get(data.to);
-    if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("msg-recieve", data.msg);
-    }
-  });
+const PORT = process.env.PORT; // Default to 3001 if PORT is not set
+server.listen(PORT, () => {
+  console.log('Server running on port 3000');
 });
+
+
+// // chat users
+// global.onlineUsers = new Map();
+// // live streaming peers
+// global.activePeers = [];
+
+// io.on("connection", (socket) => {
+//   global.chatSocket = socket;
+
+//   socket.on("add-user", (userId) => {
+//     onlineUsers.set(userId, socket.id);
+//   });
+
+//   socket.on("send-msg", (data) => {
+//     const sendUserSocket = onlineUsers.get(data.to);
+//     if (sendUserSocket) {
+//       socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+//     }
+//   });
+
+//   socket.on("register-peer", (peerInfo) => {
+//     const { ip, port } = peerInfo;
+//     activePeers.push({ id: socket.id, ip, port });
+//     console.log(`Peer registered: ${ip}:${port}`);
+//     socket.emit("registration-success", activePeers);
+//   });
+
+//   socket.on("disconnect", () => {
+//     activePeers = activePeers.filter((peer) => peer.id !== socket.id);
+//     console.log(`Peer disconnected: ${socket.id}`);
+//   });
+
+//   socket.on("get-peer-list", () => {
+//     const peerList = activePeers.filter((peer) => peer.id !== socket.id);
+//     socket.emit("peer-list", peerList);
+//   });
+// });
