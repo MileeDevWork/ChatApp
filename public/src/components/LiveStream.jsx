@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const socket = io("http://localhost:3000"); // Adjust to your server URL
 
-const LiveStream = ({ isStreamer }) => {
+const LiveStream = ({ isStreamer, streamerId }) => {
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
   let peerConnection;
@@ -38,31 +38,48 @@ const LiveStream = ({ isStreamer }) => {
         const offer = await peerConnection.createOffer();
         await peerConnection.setLocalDescription(offer);
         socket.emit("offer", offer);
+      } else if (!isStreamer && streamerId) {
+        socket.emit("request-offer", { to: streamerId });
       }
 
-      socket.on("offer", async (offer) => {
-        if (!isStreamer) {
+      socket.on("request-offer", async ({ from }) => {
+        if (isStreamer) {
+          const offer = await peerConnection.createOffer();
+          await peerConnection.setLocalDescription(offer);
+          socket.emit("offer", { offer, to: from });
+        }
+      });
+
+      socket.on("offer", async ({offer, from}) => {
+        if (!isStreamer && from === streamerId) {
           await peerConnection.setRemoteDescription(
             new RTCSessionDescription(offer)
           );
           const answer = await peerConnection.createAnswer();
           await peerConnection.setLocalDescription(answer);
-          socket.emit("answer", answer);
+          socket.emit("answer", { answer, to: from });
         }
       });
 
-      socket.on("answer", (answer) => {
-        peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+      socket.on("answer", ({ answer, from }) => {
+        if (isStreamer) {
+          peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        }
       });
 
-      socket.on("ice-candidate", (candidate) => {
-        peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+      socket.on("ice-candidate", ({ candidate, from }) => {
+        if ((isStreamer || from === streamerId) && candidate) {
+          peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        }
       });
     };
 
     initWebRTC();
-    return () => socket.off(); // Cleanup
-  }, [isStreamer]);
+    return () => {socket.off("offer");
+      socket.off("answer");
+      socket.off("ice-candidate");
+      socket.off("request-offer");}; // Cleanup
+  }, [isStreamer, streamerId]);
 
   return (
     <div className="video-wrapper">

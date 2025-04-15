@@ -1,13 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import LiveStream from '../components/LiveStream';
 import { useNavigate } from "react-router-dom";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:3000");
 
 export default function LiveStreamingPage() {
   const [isStreamer, setIsStreamer] = useState(false);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
+  const [streamers, setStreamers] = useState([]);
+  const [selectedStreamer, setSelectedStreamer] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    socket.on("streamers-update", (activeStreamers) => {
+      setStreamers(activeStreamers);
+    });
+    return () => socket.off("streamers-update");
+  }, []);
+
+  const startStreaming = () => {
+    setIsStreamer(true);
+    socket.emit("start-stream");
+  };
+
+  const stopStreaming = () => {
+    setIsStreamer(false);
+    socket.emit("stop-stream");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -22,14 +44,38 @@ export default function LiveStreamingPage() {
       <Header>
         <BackButton onClick={() => navigate("/")}>← Back</BackButton>
         <Title>Live Stream</Title>
-        <RoleButton onClick={() => setIsStreamer(!isStreamer)}>
-          {isStreamer ? "Stop Streaming" : "Start Streaming"}
-        </RoleButton>
+        {isStreamer ? (
+          <RoleButton onClick={stopStreaming}>Stop Streaming</RoleButton>
+        ) : (
+          <RoleButton onClick={startStreaming}>Start Streaming</RoleButton>
+        )}
       </Header>
 
       <StreamContainer>
-        <VideoBoard>
-          <LiveStream isStreamer={isStreamer} />
+      <VideoBoard>
+          {isStreamer ? (
+            <LiveStream isStreamer={true} />
+          ) : (
+            <div>
+              <h3>Available Streamers</h3>
+              {streamers.length === 0 ? (
+                <p>No active streamers</p>
+              ) : (
+                <ul>
+                  {streamers.map((streamerId) => (
+                    <li key={streamerId}>
+                      <button onClick={() => setSelectedStreamer(streamerId)}>
+                        Watch {streamerId}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {selectedStreamer && (
+                <LiveStream isStreamer={false} streamerId={selectedStreamer} />
+              )}
+            </div>
+          )}
         </VideoBoard>
 
         <CommentSection>

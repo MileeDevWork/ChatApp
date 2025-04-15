@@ -1,10 +1,19 @@
+const fs = require("fs");
+const logFile = "connections.log";
+const Stream = require("./models/streamModel");
+
 let activePeers = [];
 
 const onlineUsers = new Map();
+const activeStreamers = new Set();
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
     console.log(`A user connected: ${socket.id}`);
+    fs.appendFileSync(
+      logFile,
+      `${new Date()} - Peer connected: ${socket.id}\n`
+    );
 
     // Chat functionality
     socket.on("add-user", (userId) => {
@@ -20,7 +29,7 @@ module.exports = (io) => {
         ); // Debug log
         io.to(sendUserSocket).emit("msg-recieve", data.msg);
       } else {
-        console.log(`User ${data.to} not found or offline.`); // Debug log
+        console.log(`User ${data.to} offline.`); // Debug log
       }
     });
 
@@ -36,8 +45,85 @@ module.exports = (io) => {
       }
     });
 
+    socket.on("get-peer-list", () => {
+      // Send back all peers except the one asking
+      const peerList = activePeers.filter((peer) => peer.id !== socket.id);
+      socket.emit("peer-list", peerList);
+    });
+
+    // Streamer management
+    socket.on("start-stream", (data) => {
+      const { channelId } = data;
+      const newStream = new Stream({
+        streamerId: socket.id,
+        startTime: new Date(),
+        channelId: channelId || "default",
+      });
+      newStream.save();
+      activeStreamers.add(socket.id);
+      io.emit("streamers-update", Array.from(activeStreamers));
+      console.log(`Stream started by ${socket.id}`);
+      fs.appendFileSync(
+        logFile,
+        `${new Date()} - Stream started by ${socket.id}\n`
+      );
+    });
+
+    socket.on("stop-stream", () => {
+      activeStreamers.delete(socket.id);
+      io.emit("streamers-update", Array.from(activeStreamers));
+      console.log(`Stream stopped by ${socket.id}`);
+      fs.appendFileSync(
+        logFile,
+        `${new Date()} - Stream stopped by ${socket.id}\n`
+      );
+    });
+
+    // Targeted WebRTC signaling
+    socket.on("request-offer", ({ streamerId }) => {
+      if (activeStreamers.has(streamerId)) {
+        io.to(streamerId).emit("request-offer", { viewerId: socket.id });
+        fs.appendFileSync(
+          logFile,
+          `${new Date()} - Viewer ${
+            socket.id
+          } requested offer from ${streamerId}\n`
+        );
+      }
+    });
+
+    // WebRTC signaling for live streaming
+    socket.on("offer", (offer) => {
+      io.to(targetId).emit("offer", { offer, from: socket.id });
+      fs.appendFileSync(
+        logFile,
+        `${new Date()} - Offer sent from ${socket.id} to ${targetId}\n`
+      );
+    });
+
+    socket.on("answer", (answer) => {
+      io.to(targetId).emit("answer", { answer, from: socket.id });
+      fs.appendFileSync(
+        logFile,
+        `${new Date()} - Answer sent from ${socket.id} to ${targetId}\n`
+      );
+    });
+
+    socket.on("ice-candidate", (candidate) => {
+      io.to(targetId).emit("ice-candidate", { candidate, from: socket.id });
+      fs.appendFileSync(
+        logFile,
+        `${new Date()} - ICE candidate sent from ${socket.id} to ${targetId}\n`
+      );
+    });
+
     socket.on("disconnect", () => {
       console.log(`User/Peer disconnected: ${socket.id}`);
+      fs.appendFileSync(
+        logFile,
+        `${new Date()} - Peer disconnected: ${socket.id}\n`
+      );
+
       // Remove user from onlineUsers map
       for (let [userId, socketId] of onlineUsers.entries()) {
         if (socketId === socket.id) {
@@ -46,38 +132,11 @@ module.exports = (io) => {
           break;
         }
       }
-      // Filter out the disconnected peer - **THIS REQUIRES activePeers to be 'let'**
-      const initialLength = activePeers.length;
+
+      // Remove from activePeers
       activePeers = activePeers.filter((peer) => peer.id !== socket.id);
-      if (activePeers.length < initialLength) {
-        console.log(`Peer ${socket.id} removed from active peers.`);
-        console.log("Active peers:", activePeers); // Debug log
-      }
-    });
-
-    socket.on("get-peer-list", () => {
-      // Send back all peers except the one asking
-      const peerList = activePeers.filter((peer) => peer.id !== socket.id);
-      socket.emit("peer-list", peerList);
-    });
-
-    // WebRTC signaling for live streaming
-    socket.on("offer", (offer) => {
-      socket.broadcast.emit("offer", offer); // Broadcast offer to all peers
-    });
-
-    socket.on("answer", (answer) => {
-      socket.broadcast.emit("answer", answer); // Send answer back to streamer
-    });
-
-    socket.on("ice-candidate", (candidate) => {
-      socket.broadcast.emit("ice-candidate", candidate); // Share ICE candidates
-    });
-
-    // Peer registration with tracker
-    socket.on("register-peer", (peerData) => {
-      // Store peer info (e.g., in memory or database)
-      console.log(`Peer registered: ${socket.id}`);
+      activeStreamers.delete(socket.id);
+      io.emit("streamers-update", Array.from(activeStreamers));
     });
   });
 };
