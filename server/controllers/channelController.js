@@ -52,3 +52,16 @@ module.exports.addMemberToChannel = async (req, res, next) => {
     next(ex);
   }
 };
+
+//lấy danh sách kênh của user
+module.exports.getChannelsByUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    const channels = await Channel.find({ members: userId }).populate("members", "username _id");
+
+    return res.status(200).json({ status: true, channels });
+  } catch (ex) {
+    next(ex);
+  }
+};
