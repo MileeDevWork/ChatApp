@@ -38,51 +38,14 @@ const server = http.createServer(app);
 const io = socket(server, {
   cors: {
     origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
 setupSocket(io);
 
-const PORT = process.env.PORT; // Default to 3001 if PORT is not set
+const PORT = process.env.PORT; 
 server.listen(PORT, () => {
-  console.log('Server running on port 3000');
+  console.log('Server running on port 5001');
 });
-
-
-// // chat users
-// global.onlineUsers = new Map();
-// // live streaming peers
-// global.activePeers = [];
-
-// io.on("connection", (socket) => {
-//   global.chatSocket = socket;
-
-//   socket.on("add-user", (userId) => {
-//     onlineUsers.set(userId, socket.id);
-//   });
-
-//   socket.on("send-msg", (data) => {
-//     const sendUserSocket = onlineUsers.get(data.to);
-//     if (sendUserSocket) {
-//       socket.to(sendUserSocket).emit("msg-recieve", data.msg);
-//     }
-//   });
-
-//   socket.on("register-peer", (peerInfo) => {
-//     const { ip, port } = peerInfo;
-//     activePeers.push({ id: socket.id, ip, port });
-//     console.log(`Peer registered: ${ip}:${port}`);
-//     socket.emit("registration-success", activePeers);
-//   });
-
-//   socket.on("disconnect", () => {
-//     activePeers = activePeers.filter((peer) => peer.id !== socket.id);
-//     console.log(`Peer disconnected: ${socket.id}`);
-//   });
-
-//   socket.on("get-peer-list", () => {
-//     const peerList = activePeers.filter((peer) => peer.id !== socket.id);
-//     socket.emit("peer-list", peerList);
-//   });
-// });

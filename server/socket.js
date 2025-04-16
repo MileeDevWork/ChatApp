@@ -5,6 +5,7 @@ const Stream = require("./models/streamModel");
 let activePeers = [];
 
 const onlineUsers = new Map();
+global.onlineUsers = onlineUsers;
 const activeStreamers = new Set();
 
 module.exports = (io) => {
@@ -53,14 +54,14 @@ module.exports = (io) => {
 
     // Streamer management
     socket.on("start-stream", (data) => {
-      const { channelId } = data;
+      const { channelId, username } = data;
       const newStream = new Stream({
         streamerId: socket.id,
         startTime: new Date(),
         channelId: channelId || "default",
       });
       newStream.save();
-      activeStreamers.add(socket.id);
+      activeStreamers.add({ id: socket.id, username: username || `Streamer_${socket.id}` });
       io.emit("streamers-update", Array.from(activeStreamers));
       console.log(`Stream started by ${socket.id}`);
       fs.appendFileSync(
@@ -70,13 +71,12 @@ module.exports = (io) => {
     });
 
     socket.on("stop-stream", () => {
-      activeStreamers.delete(socket.id);
+      activeStreamers.forEach((streamer) => {
+        if (streamer.id === socket.id) activeStreamers.delete(streamer);
+      });
       io.emit("streamers-update", Array.from(activeStreamers));
       console.log(`Stream stopped by ${socket.id}`);
-      fs.appendFileSync(
-        logFile,
-        `${new Date()} - Stream stopped by ${socket.id}\n`
-      );
+      fs.appendFileSync(logFile, `${new Date()} - Stream stopped by ${socket.id}\n`);
     });
 
     // Targeted WebRTC signaling
@@ -93,28 +93,33 @@ module.exports = (io) => {
     });
 
     // WebRTC signaling for live streaming
-    socket.on("offer", (offer) => {
-      io.to(targetId).emit("offer", { offer, from: socket.id });
+    socket.on("offer", ({ offer, to }) => {
+      io.to(to).emit("offer", { offer, from: socket.id });
       fs.appendFileSync(
         logFile,
-        `${new Date()} - Offer sent from ${socket.id} to ${targetId}\n`
+        `${new Date()} - Offer sent from ${socket.id} to ${to}\n`
       );
     });
 
-    socket.on("answer", (answer) => {
-      io.to(targetId).emit("answer", { answer, from: socket.id });
+    socket.on("answer", ({ answer, to }) => {
+      io.to(to).emit("answer", { answer, from: socket.id });
       fs.appendFileSync(
         logFile,
-        `${new Date()} - Answer sent from ${socket.id} to ${targetId}\n`
+        `${new Date()} - Answer sent from ${socket.id} to ${to}\n`
       );
     });
 
-    socket.on("ice-candidate", (candidate) => {
-      io.to(targetId).emit("ice-candidate", { candidate, from: socket.id });
+    socket.on("ice-candidate", ({ candidate, to }) => {
+      io.to(to).emit("ice-candidate", { candidate, from: socket.id });
       fs.appendFileSync(
         logFile,
-        `${new Date()} - ICE candidate sent from ${socket.id} to ${targetId}\n`
+        `${new Date()} - ICE candidate sent from ${socket.id} to ${to}\n`
       );
+    });
+
+    socket.on("get-stream-history", async () => {
+      const streams = await Stream.find({}).sort({ startTime: -1 }).limit(10);
+      socket.emit("stream-history", streams);
     });
 
     socket.on("disconnect", () => {

@@ -1,103 +1,135 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const socket = io("http://localhost:3000"); // Adjust to your server URL
 
 const LiveStream = ({ isStreamer, streamerId }) => {
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
-  let peerConnection;
+  const peerConnections = useRef(new Map()); // Map to hold peer connections for multiple viewers
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const initWebRTC = async () => {
-      peerConnection = new RTCPeerConnection({
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }], // Free STUN server
-      });
-
-      peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-          socket.emit("ice-candidate", event.candidate);
-        }
-      };
-
-      peerConnection.ontrack = (event) => {
-        remoteVideoRef.current.srcObject = event.streams[0];
-      };
-
       if (isStreamer) {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
-        localVideoRef.current.srcObject = stream;
-        stream
-          .getTracks()
-          .forEach((track) => peerConnection.addTrack(track, stream));
-
-        const offer = await peerConnection.createOffer();
-        await peerConnection.setLocalDescription(offer);
-        socket.emit("offer", offer);
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+          });
+          if (localVideoRef.current) {
+            localVideoRef.current.srcObject = stream;
+          }
+          // Add tracks to all peer connections when they are created
+          socket.on("request-offer", async ({ from }) => {
+            const pc = new RTCPeerConnection({
+              iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+            });
+            peerConnections.current.set(from, pc);
+            pc.onicecandidate = (event) => {
+              if (event.candidate) {
+                socket.emit("ice-candidate", {
+                  candidate: event.candidate,
+                  to: from,
+                });
+              }
+            };
+            stream.getTracks().forEach((track) => pc.addTrack(track, stream));
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            socket.emit("offer", { offer, to: from, from: socket.id });
+          });
+        } catch (error) {
+          console.error("Media access failed:", error);
+          setError("Could not access camera/microphone. Please check permissions.");
+        }
       } else if (!isStreamer && streamerId) {
-        socket.emit("request-offer", { to: streamerId });
+        const pc = new RTCPeerConnection({
+          iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+        });
+        peerConnections.current.set(streamerId, pc);
+        pc.onicecandidate = (event) => {
+          if (event.candidate) {
+            socket.emit("ice-candidate", {
+              candidate: event.candidate,
+              to: streamerId,
+            });
+          }
+        };
+        pc.ontrack = (event) => {
+          if (remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = event.streams[0];
+          }
+        };
+        socket.emit("request-offer", { to: streamerId, from: socket.id });
       }
 
-      socket.on("request-offer", async ({ from }) => {
-        if (isStreamer) {
-          const offer = await peerConnection.createOffer();
-          await peerConnection.setLocalDescription(offer);
-          socket.emit("offer", { offer, to: from });
-        }
-      });
-
-      socket.on("offer", async ({offer, from}) => {
+      socket.on("offer", async ({ offer, from }) => {
         if (!isStreamer && from === streamerId) {
-          await peerConnection.setRemoteDescription(
-            new RTCSessionDescription(offer)
-          );
-          const answer = await peerConnection.createAnswer();
-          await peerConnection.setLocalDescription(answer);
+          const pc = peerConnections.current.get(streamerId);
+          await pc.setRemoteDescription(new RTCSessionDescription(offer));
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
           socket.emit("answer", { answer, to: from });
         }
       });
 
       socket.on("answer", ({ answer, from }) => {
         if (isStreamer) {
-          peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+          const pc = peerConnections.current.get(from);
+          if (pc) {
+            pc.setRemoteDescription(new RTCSessionDescription(answer));
+          }
         }
       });
 
       socket.on("ice-candidate", ({ candidate, from }) => {
-        if ((isStreamer || from === streamerId) && candidate) {
-          peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        const pc = isStreamer
+          ? peerConnections.current.get(from)
+          : peerConnections.current.get(streamerId);
+        if (pc && candidate) {
+          pc.addIceCandidate(new RTCIceCandidate(candidate));
         }
       });
     };
 
     initWebRTC();
-    return () => {socket.off("offer");
+
+    return () => {
+      socket.off("request-offer");
+      socket.off("offer");
       socket.off("answer");
       socket.off("ice-candidate");
-      socket.off("request-offer");}; // Cleanup
+      peerConnections.current.forEach((pc) => pc.close());
+      peerConnections.current.clear();
+      if (localVideoRef.current && localVideoRef.current.srcObject) {
+        localVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+      }
+    };
   }, [isStreamer, streamerId]);
 
+  if (error) {
+    return <ErrorMessage>{error}</ErrorMessage>;
+  }
+
   return (
-    <div className="video-wrapper">
-    <video
-      ref={isStreamer ? localVideoRef : remoteVideoRef}
-      autoPlay
-      muted={isStreamer} // Streamer tắt tiếng chính mình
-      className="live-video"
-    />
-  </div>
+    <VideoWrapper>
+      <video
+        ref={isStreamer ? localVideoRef : remoteVideoRef}
+        autoPlay
+        muted={isStreamer}
+        className="live-video"
+      />
+    </VideoWrapper>
   );
 };
 
-const VideoBoard = styled.div`
+const VideoWrapper = styled.div`
   width: 100%;
   height: 100%;
-  display: flex;
   background-color: #000;
+  display: flex;
   justify-content: center;
   align-items: center;
 
@@ -110,5 +142,9 @@ const VideoBoard = styled.div`
   }
 `;
 
+const ErrorMessage = styled.p`
+  color: red;
+  text-align: center;
+`;
 
 export default LiveStream;

@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import LiveStream from '../components/LiveStream';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import LiveStream from "../components/LiveStream";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:5001", {
+  transports: ["websocket"],
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+});
 
 export default function LiveStreamingPage() {
   const [isStreamer, setIsStreamer] = useState(false);
@@ -15,34 +20,57 @@ export default function LiveStreamingPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to server:", socket.id);
+    });
     socket.on("streamers-update", (activeStreamers) => {
       setStreamers(activeStreamers);
     });
-    return () => socket.off("streamers-update");
+    socket.on("receive-comment", ({ comment }) => {
+      setComments((prev) => [...prev, comment]);
+    });
+    return () => {
+      socket.off("connect");
+      socket.off("streamers-update");
+      socket.off("receive-comment");
+    };
   }, []);
 
   const startStreaming = () => {
+    console.log("Starting stream for user");
     setIsStreamer(true);
-    socket.emit("start-stream");
+    const currentUser = JSON.parse(localStorage.getItem("user")); // Adjust key as needed
+    socket.emit("start-stream", {
+      username: currentUser?.username || "Guest",
+      channelId: "main",
+    });
   };
 
   const stopStreaming = () => {
+    console.log("Stopping stream");
     setIsStreamer(false);
     socket.emit("stop-stream");
+    // Additional cleanup if needed
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (comment.trim()) {
       setComments([...comments, comment]);
+      socket.emit("send-comment", { comment, streamerId: selectedStreamer });
       setComment("");
     }
+  };
+
+  const handleBack = () => {
+    stopStreaming();
+    navigate("/");
   };
 
   return (
     <Wrapper>
       <Header>
-        <BackButton onClick={() => navigate("/")}>← Back</BackButton>
+        <BackButton onClick={handleBack}>← Back</BackButton>
         <Title>Live Stream</Title>
         {isStreamer ? (
           <RoleButton onClick={stopStreaming}>Stop Streaming</RoleButton>
@@ -52,7 +80,7 @@ export default function LiveStreamingPage() {
       </Header>
 
       <StreamContainer>
-      <VideoBoard>
+        <VideoBoard>
           {isStreamer ? (
             <LiveStream isStreamer={true} />
           ) : (
@@ -62,10 +90,14 @@ export default function LiveStreamingPage() {
                 <p>No active streamers</p>
               ) : (
                 <ul>
-                  {streamers.map((streamerId) => (
-                    <li key={streamerId}>
-                      <button onClick={() => setSelectedStreamer(streamerId)}>
-                        Watch {streamerId}
+                  {streamers.map((streamer) => (
+                    <li key={streamer.id || streamer}>
+                      <button
+                        onClick={() =>
+                          setSelectedStreamer(streamer.id || streamer)
+                        }
+                      >
+                        Watch {streamer.username || streamer.id || streamer}
                       </button>
                     </li>
                   ))}
@@ -97,6 +129,7 @@ export default function LiveStreamingPage() {
     </Wrapper>
   );
 }
+
 const Wrapper = styled.div`
   height: 100vh;
   width: 100vw;
