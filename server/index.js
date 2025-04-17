@@ -66,6 +66,7 @@ const setupSocket = require('./socket');
 const http = require('http');
 const channelRoutes = require("./routes/channel");  // Đảm bảo đã import routes cho kênh
 
+
 require("dotenv").config();
 
 app.use(cors());
@@ -75,6 +76,7 @@ app.use(express.json());
 app.use("/api/channels", channelRoutes); // Đường dẫn cho các API kênh
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/channel", channelRoutes);
 
 // Kết nối MongoDB
 mongoose

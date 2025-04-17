@@ -144,4 +144,19 @@ module.exports = (io) => {
       io.emit("streamers-update", Array.from(activeStreamers));
     });
   });
+
+  io.on("connection", (socket) => {
+    socket.on("join-channel", (channelId) => {
+      socket.join(channelId);
+    });
+  
+    socket.on("send-channel-message", (data) => {
+      const { channelId, senderId, message } = data;
+      socket.to(channelId).emit("channel-message", {
+        senderId,
+        message,
+      });
+    });
+  });
+  
 };
