@@ -308,6 +308,25 @@ export default function ChannelChat() {
   const [newMemberUsername, setNewMemberUsername] = useState("");
   const scrollRef = useRef();
   const socket = useRef();
+  // Thêm state mới
+  const [users, setUsers] = useState([]);
+  const [selectedMembers, setSelectedMembers] = useState([]);
+
+  // Thêm function để fetch users
+  const fetchUsers = async () => {
+    try {
+      const currentUser = getCurrentUser();
+      const response = await axios.get(`http://localhost:5001/api/auth/allusers/${currentUser._id}`);
+      setUsers(response.data);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    }
+  };
+
+  // Thêm useEffect để load users
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const getCurrentUser = () => {
     return JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
@@ -362,22 +381,38 @@ export default function ChannelChat() {
     }
   };
 
+  // const handleAddMember = async () => {
+  //   if (!newMemberUsername.trim()) return;
+  //   try {
+  //     const res = await axios.post("http://localhost:5001/api/channels/addmember", {
+  //       channelId,
+  //       username: newMemberUsername.trim(),
+  //     });
+  //     alert("Thêm thành viên thành công!");
+  //     setNewMemberUsername("");
+  //     fetchMembers();
+  //   } catch (err) {
+  //     console.error("Lỗi khi thêm thành viên:", err);
+  //     alert("Không thể thêm thành viên.");
+  //   }
+  // };
+
   const handleAddMember = async () => {
-    if (!newMemberUsername.trim()) return;
     try {
-      const res = await axios.post("http://localhost:5001/api/channels/addmember", {
-        channelId,
-        username: newMemberUsername.trim(),
-      });
+      for (const userId of selectedMembers) {
+        await axios.post("http://localhost:5001/api/channels/addmember", {
+          channelId,
+          userId
+        });
+      }
       alert("Thêm thành viên thành công!");
-      setNewMemberUsername("");
+      setSelectedMembers([]);
       fetchMembers();
     } catch (err) {
       console.error("Lỗi khi thêm thành viên:", err);
       alert("Không thể thêm thành viên.");
     }
   };
-
   const handleLeaveChannel = async () => {
     const user = getCurrentUser();
     try {
@@ -505,13 +540,36 @@ export default function ChannelChat() {
 
         <div style={{ marginTop: "1rem" }}>
           <h4>Thêm thành viên</h4>
-          <input
+          {/* <input
             type="text"
             placeholder="Nhập username"
             value={newMemberUsername}
             onChange={(e) => setNewMemberUsername(e.target.value)}
             style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
-          />
+          /> */}
+          <select
+            multiple
+            value={selectedMembers}
+            onChange={(e) => {
+              const options = Array.from(e.target.selectedOptions, (option) => option.value);
+              setSelectedMembers(options);
+            }}
+            style={{
+              width: "100%",
+              padding: "0.5rem",
+              marginBottom: "0.5rem",
+              borderRadius: "0.375rem",
+              border: "1px solid #e5e7eb"
+            }}
+          >
+            {users
+              .filter(user => !members.some(member => member._id === user._id)) // Lọc ra những user chưa là thành viên
+              .map((user) => (
+                <option key={user._id} value={user._id}>
+                  {user.username}
+                </option>
+              ))}
+          </select>
           <button onClick={handleAddMember} style={{ padding: "0.5rem 1rem", background: "#10b981", color: "white", border: "none", borderRadius: "6px", cursor: "pointer" }}>
             Thêm
           </button>
