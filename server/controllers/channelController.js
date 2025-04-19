@@ -9,12 +9,17 @@ module.exports.createChannel = async (req, res, next) => {
     // Kiểm tra nếu kênh đã tồn tại
     const existingChannel = await Channel.findOne({ name });
     if (existingChannel) {
-      return res.status(400).json({ msg: "Channel already exists", status: false });
+      return res
+        .status(400)
+        .json({ msg: "Channel already exists", status: false });
     }
 
     // Tạo kênh mới
     const channel = new Channel({ name, creator, members: [creator] });
-    const populatedChannel = await Channel.findById(channel._id).populate("members", "username _id");
+    const populatedChannel = await Channel.findById(channel._id).populate(
+      "members",
+      "username _id"
+    );
     await channel.save();
 
     return res.status(200).json({
@@ -42,14 +47,22 @@ module.exports.addMemberToChannel = async (req, res, next) => {
 
     // Kiểm tra xem user đã có trong kênh chưa
     if (channel.members.includes(userId)) {
-      return res.status(400).json({ msg: "User already a member", status: false });
+      return res
+        .status(400)
+        .json({ msg: "User already a member", status: false });
     }
 
     // Thêm user vào kênh
     channel.members.push(userId);
     await channel.save(); // Lưu thay đổi vào DB
 
-    return res.status(200).json({ msg: "User added to channel successfully", status: true, channel });
+    return res
+      .status(200)
+      .json({
+        msg: "User added to channel successfully",
+        status: true,
+        channel,
+      });
   } catch (ex) {
     next(ex);
   }
@@ -60,7 +73,10 @@ module.exports.getChannelsByUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
 
-    const channels = await Channel.find({ members: userId }).populate("members", "username _id");
+    const channels = await Channel.find({ members: userId }).populate(
+      "members",
+      "username _id"
+    );
 
     return res.status(200).json({ status: true, channels });
   } catch (ex) {
@@ -101,7 +117,9 @@ module.exports.leaveChannel = async (req, res, next) => {
 
     const memberIndex = channel.members.indexOf(userId);
     if (memberIndex === -1) {
-      return res.status(400).json({ status: false, msg: "User is not a member of the channel" });
+      return res
+        .status(400)
+        .json({ status: false, msg: "User is not a member of the channel" });
     }
 
     // Xóa user khỏi danh sách
