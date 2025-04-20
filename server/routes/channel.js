@@ -1,10 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../middleware/fileUpload");
+
 const { createChannel, addMemberToChannel, getChannelsByUser } = require("../controllers/channelController");
 const { sendChannelMessage, getChannelMessages, } = require("../controllers/channelMessageController");
 const { getChannelMembers } = require("../controllers/channelController");
 const { leaveChannel } = require("../controllers/channelController");
 const { getAllUsers } = require("../controllers/userController");
+const { sendChannelFileMessage } = require("../controllers/channelMessageController");
+
 
 // Route tạo kênh mới
 router.post("/create", createChannel);
@@ -29,5 +33,8 @@ router.post("/leave", leaveChannel);
 
 // Lấy toàn bộ user trong hệ thống
 router.get("/users", getAllUsers);
+
+// Gửi file tin nhắn
+router.post("/message/file", upload.single("file"), sendChannelFileMessage);
 
 module.exports = router;

@@ -12,9 +12,14 @@ const channelMessageSchema = new mongoose.Schema({
     required: true,
   },
   message: {
-    type: String,
-    required: true,
+    type: String, 
   },
+  fileUrl: {
+    type: String, 
+  },
+  fileName: {
+    type: String, 
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("ChannelMessages", channelMessageSchema);

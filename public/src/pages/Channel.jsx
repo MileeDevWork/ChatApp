@@ -91,9 +91,6 @@ const Channel = () => {
             <div className="channel-header">
                 <button className="back-button" onClick={handleBack}>← Back</button>
                 <h1>Channels</h1>
-                <button className="create-button" onClick={handleCreateChannelClick}>
-                    Create New Channel
-                </button>
             </div>
 
             {error && <div className="error-message">{error}</div>}
