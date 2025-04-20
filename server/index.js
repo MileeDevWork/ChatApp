@@ -41,6 +41,11 @@ const io = socket(server, {
     methods: ["GET", "POST"],
     credentials: true,
   },
+  pingTimeout: 60000, // Wait 60 seconds before disconnecting
+  pingInterval: 25000, // Check every 25 seconds
+  reconnection: true,
+  reconnectionAttempts: 10,
+  reconnectionDelay: 1000,
 });
 
 setupSocket(io);

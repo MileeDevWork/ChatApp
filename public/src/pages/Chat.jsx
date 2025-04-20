@@ -8,13 +8,13 @@ import ChatContainer from "../components/ChatContainer";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
 
-
 export default function Chat() {
   const navigate = useNavigate();
   const socket = useRef();
   const [contacts, setContacts] = useState([]);
   const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
+
   useEffect(async () => {
     if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
       navigate("/login");
@@ -43,9 +43,11 @@ export default function Chat() {
       }
     }
   }, [currentUser]);
+
   const handleChatChange = (chat) => {
     setCurrentChat(chat);
   };
+  
   const goToLiveStreaming = () => {
     navigate("/live");
   };

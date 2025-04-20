@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
 
-const socket = io("http://localhost:3000"); // Adjust to your server URL
+const socket = io("http://localhost:5001");
 
 const LiveStream = ({ isStreamer, streamerId }) => {
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
-  const peerConnections = useRef(new Map()); // Map to hold peer connections for multiple viewers
+  const peerConnections = useRef(new Map());
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -21,7 +21,6 @@ const LiveStream = ({ isStreamer, streamerId }) => {
           if (localVideoRef.current) {
             localVideoRef.current.srcObject = stream;
           }
-          // Add tracks to all peer connections when they are created
           socket.on("request-offer", async ({ from }) => {
             const pc = new RTCPeerConnection({
               iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
@@ -38,11 +37,17 @@ const LiveStream = ({ isStreamer, streamerId }) => {
             stream.getTracks().forEach((track) => pc.addTrack(track, stream));
             const offer = await pc.createOffer();
             await pc.setLocalDescription(offer);
-            socket.emit("offer", { offer, to: from, from: socket.id });
+            socket.emit("offer", { offer, to: from });
+            pc.onconnectionstatechange = () => {
+              console.log(`Connection state: ${pc.connectionState}`);
+              if (pc.connectionState === "failed") {
+                setError("Failed to connect to viewer");
+              }
+            };
           });
         } catch (error) {
           console.error("Media access failed:", error);
-          setError("Could not access camera/microphone. Please check permissions.");
+          setError("Could not access camera/microphone.");
         }
       } else if (!isStreamer && streamerId) {
         const pc = new RTCPeerConnection({
@@ -58,11 +63,20 @@ const LiveStream = ({ isStreamer, streamerId }) => {
           }
         };
         pc.ontrack = (event) => {
+          console.log("Received remote stream:", event.streams[0]);
           if (remoteVideoRef.current) {
             remoteVideoRef.current.srcObject = event.streams[0];
+          } else {
+            console.error("remoteVideoRef is not set");
           }
         };
-        socket.emit("request-offer", { to: streamerId, from: socket.id });
+        pc.onconnectionstatechange = () => {
+          console.log(`Connection state: ${pc.connectionState}`);
+          if (pc.connectionState === "failed") {
+            setError("Failed to connect to stream.");
+          }
+        };
+        socket.emit("request-offer", { streamerId });
       }
 
       socket.on("offer", async ({ offer, from }) => {
@@ -92,6 +106,10 @@ const LiveStream = ({ isStreamer, streamerId }) => {
           pc.addIceCandidate(new RTCIceCandidate(candidate));
         }
       });
+
+      socket.on("error", ({ message }) => {
+        setError(message);
+      });
     };
 
     initWebRTC();
@@ -104,17 +122,16 @@ const LiveStream = ({ isStreamer, streamerId }) => {
       peerConnections.current.forEach((pc) => pc.close());
       peerConnections.current.clear();
       if (localVideoRef.current && localVideoRef.current.srcObject) {
-        localVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+        localVideoRef.current.srcObject
+          .getTracks()
+          .forEach((track) => track.stop());
       }
     };
   }, [isStreamer, streamerId]);
 
-  if (error) {
-    return <ErrorMessage>{error}</ErrorMessage>;
-  }
-
   return (
     <VideoWrapper>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
       <video
         ref={isStreamer ? localVideoRef : remoteVideoRef}
         autoPlay
