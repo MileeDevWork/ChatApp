@@ -1,22 +1,32 @@
-const { addMessage, getMessages } = require("../controllers/messageController");
+// const { addMessage, getMessages } = require("../controllers/messageController");
+// const router = require("express").Router();
+
+// router.post("/addmsg/", addMessage);
+// router.post("/getmsg/", getMessages);
+
+// router.post("/addmsg", async (req, res, next) => {
+//     try {
+//       const { message, sender, groupId } = req.body;
+//       const data = await Messages.create({
+//         message: message,
+//         sender: sender,
+//         groupId: groupId || null,
+//       });
+//       if (data) return res.json({ msg: "Message added successfully." });
+//       return res.json({ msg: "Failed to add message to the database" });
+//     } catch (ex) {
+//       next(ex);
+//     }
+//   });
+
+// module.exports = router;
+
+const { addMessage, getMessages, addFileMessage } = require("../controllers/messageController");
+const upload = require("../middleware/fileUpload");
 const router = require("express").Router();
 
-router.post("/addmsg/", addMessage);
-router.post("/getmsg/", getMessages);
-
-router.post("/addmsg", async (req, res, next) => {
-    try {
-      const { message, sender, groupId } = req.body;
-      const data = await Messages.create({
-        message: message,
-        sender: sender,
-        groupId: groupId || null,
-      });
-      if (data) return res.json({ msg: "Message added successfully." });
-      return res.json({ msg: "Failed to add message to the database" });
-    } catch (ex) {
-      next(ex);
-    }
-  });
+router.post("/addmsg", addMessage);
+router.post("/getmsg", getMessages);
+router.post("/addfilemsg", upload.single("file"), addFileMessage);
 
 module.exports = router;
