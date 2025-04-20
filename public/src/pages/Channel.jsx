@@ -91,21 +91,31 @@ const Channel = () => {
             <div className="channel-header">
                 <button className="back-button" onClick={handleBack}>← Back</button>
                 <h1>Channels</h1>
+                <button 
+                    className="create-button" 
+                    onClick={handleCreateChannelClick}
+                >
+                    Create Channel
+                </button>
             </div>
 
             {error && <div className="error-message">{error}</div>}
 
             {isCreatingChannel && (
-                <div className="create-channel-form">
+                <CreateBox onSubmit={(e) => {
+                    e.preventDefault();
+                    handleCreateChannelSubmit();
+                }}>
                     <input
                         type="text"
-                        placeholder="Enter channel name"
+                        placeholder="Tên kênh mới"
                         value={newChannelName}
                         onChange={handleNewChannelNameChange}
                     />
-                    <button onClick={handleCreateChannelSubmit}>Create</button>
-                </div>
+                    <button type="submit">Tạo</button>
+                </CreateBox>
             )}
+
 
             <div className="channels-list">
                 <h2>Your Channels</h2>
@@ -129,6 +139,38 @@ const Channel = () => {
         </Container>
     );
 };
+
+const CreateBox = styled.form`
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    
+    input {
+        flex: 1;
+        padding: 0.5rem 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        
+        &:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+    }
+
+    button {
+        padding: 0.5rem 1rem;
+        background-color: #6366f1;
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #4f46e5;
+        }
+    }
+`;
 
 const Container = styled.div`
     padding: 2rem;
@@ -162,10 +204,16 @@ const Container = styled.div`
         }
 
         .create-button {
-            background-color: #4f46e5;
+            background-color: #6366f1;
             color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
             &:hover {
-                background-color: #4338ca;
+                background-color: #4f46e5;
             }
         }
     }

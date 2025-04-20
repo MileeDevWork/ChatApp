@@ -180,6 +180,10 @@ export default function ChannelChat() {
     }
   };
 
+  const handleBack = () => {
+    navigate('/');  // Navigate back to the main chat page
+  };
+
   return (
     <Grid>
       <LeftSidebar>
@@ -203,7 +207,16 @@ export default function ChannelChat() {
       </LeftSidebar>
 
       <ChatBox>
-        <h2>Channel Chat - ID: {channelId}</h2>
+        {/* <h2>Channel Chat - ID: {channelId}</h2> */}
+        <div className="chat-header">
+          <div className="header-left">
+            <button className="back-button" onClick={handleBack}>← Back</button>
+            <h2>Channel Chat - {channels.find(ch => ch._id === channelId)?.name || channelId}</h2>
+          </div>
+          <span className="current-user">
+            {getCurrentUser().username}
+          </span>
+        </div>
         <Messages>
           {messages.map((msg) => (
             <div key={uuidv4()} ref={scrollRef} className="message">
@@ -323,6 +336,24 @@ const ChatBox = styled.div`
     border-bottom: 1px solid #e5e7eb;
     color: #1f2937;
     font-size: 1.5rem;
+  }
+  .chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e7eb;
+
+    h2 {
+      color: #1f2937;
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .current-user {
+      color: #4f46e5;
+      font-weight: 500;
+    }
   }
 `;
 
