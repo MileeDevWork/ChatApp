@@ -4,60 +4,150 @@ import LiveStream from "../components/LiveStream";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5001", {
-  transports: ["websocket"],
-  reconnection: true,
-  reconnectionAttempts: 5,
-  reconnectionDelay: 1000,
-});
-
 export default function LiveStreamingPage() {
   const [isStreamer, setIsStreamer] = useState(false);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [streamers, setStreamers] = useState([]);
   const [selectedStreamer, setSelectedStreamer] = useState(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(undefined);
+  const [socket, setSocket] = useState(null);
 
+  // Check authentication on mount (support visitor mode)
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected to server:", socket.id);
-    });
-    socket.on("streamers-update", (activeStreamers) => {
-      setStreamers(activeStreamers);
-    });
-    socket.on("receive-comment", ({ comment }) => {
-      setComments((prev) => [...prev, comment]);
-    });
-    return () => {
-      socket.off("connect");
-      socket.off("streamers-update");
-      socket.off("receive-comment");
+    const checkUser = async () => {
+      const userData = localStorage.getItem(
+        process.env.REACT_APP_LOCALHOST_KEY
+      );
+      if (!userData) {
+        // Visitor mode: No user in localStorage, allow access
+        setCurrentUser(undefined);
+        return;
+      }
+
+      try {
+        const user = await JSON.parse(userData);
+        if (!user || !user.username) {
+          // Invalid user data, treat as visitor
+          localStorage.removeItem(process.env.REACT_APP_LOCALHOST_KEY);
+          setCurrentUser(undefined);
+        } else {
+          // Valid user, set currentUser for authenticated mode
+          setCurrentUser(user);
+        }
+      } catch (error) {
+        console.error("Failed to parse user from localStorage:", error);
+        localStorage.removeItem(process.env.REACT_APP_LOCALHOST_KEY);
+        setCurrentUser(undefined);
+      }
     };
+    checkUser();
   }, []);
 
+  // Initialize Socket.IO connection
+  useEffect(() => {
+    const newSocket = io("http://localhost:5001", {
+      transports: ["websocket"],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+    setSocket(newSocket);
+
+    newSocket.on("connect", () => {
+      console.log("Connected to server:", newSocket.id);
+      if (!currentUser) {
+        newSocket.emit("register-visitor", { nickname: `Visitor_${newSocket.id}` });
+      }
+      if (selectedStreamer) {
+        newSocket.emit("get-comments", { streamerId: selectedStreamer });
+      }
+    });
+
+    newSocket.on("disconnect", (reason) => {
+      console.log("Disconnected from server:", reason);
+    });
+
+    newSocket.on("streamers-update", (activeStreamers) => {
+      console.log("Received streamers-update:", activeStreamers);
+      setStreamers(activeStreamers);
+      if (
+        selectedStreamer &&
+        !activeStreamers.find((s) => s.id === selectedStreamer)
+      ) {
+        setSelectedStreamer(null);
+        setComments([]);
+        setError("Streamer disconnected");
+      }
+    });
+
+    newSocket.on("receive-comment", ({ comment, from, username }) => {
+      setComments((prev) => [...prev, `${username}: ${comment}`]);
+    });
+
+    newSocket.on("comments-history", (comments) => {
+      setComments(comments.map((c) => `${c.username}: ${c.comment}`));
+    });
+
+    newSocket.on("error", ({ message }) => {
+      setError(message);
+      if (message === "Authentication required to start streaming") {
+        navigate("/login");
+      }
+    });
+
+    newSocket.on("connect_error", (error) => {
+      console.error("Socket.IO connection error:", error);
+      setError("Failed to connect to server");
+    });
+
+    return () => {
+      newSocket.disconnect();
+      newSocket.off("connect");
+      newSocket.off("streamers-update");
+      newSocket.off("receive-comment");
+      newSocket.off("comments-history");
+      newSocket.off("error");
+      newSocket.off("connect_error");
+    };
+  }, [navigate]);
+
   const startStreaming = () => {
-    console.log("Starting stream for user");
+    if (!currentUser) {
+      setError("Please log in to start streaming");
+      navigate("/login");
+      return;
+    }
+    if (isStreamer) return; // Prevent multiple start-stream calls
     setIsStreamer(true);
-    const currentUser = JSON.parse(localStorage.getItem("user")); // Adjust key as needed
     socket.emit("start-stream", {
-      username: currentUser?.username || "Guest",
+      username: currentUser.username,
       channelId: "main",
     });
+    setSelectedStreamer(socket.id);
   };
 
   const stopStreaming = () => {
-    console.log("Stopping stream");
     setIsStreamer(false);
     socket.emit("stop-stream");
-    // Additional cleanup if needed
+    setSelectedStreamer(null);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (comment.trim()) {
-      setComments([...comments, comment]);
-      socket.emit("send-comment", { comment, streamerId: selectedStreamer });
+      if (!currentUser) {
+        setError("Please log in to comment");
+        navigate("/login");
+        return;
+      }
+      socket.emit("send-comment", {
+        comment,
+        streamerId: isStreamer ? socket.id : selectedStreamer,
+        username: currentUser.username,
+      });
       setComment("");
     }
   };
@@ -67,6 +157,10 @@ export default function LiveStreamingPage() {
     navigate("/");
   };
 
+  if (!socket) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Wrapper>
       <Header>
@@ -75,14 +169,16 @@ export default function LiveStreamingPage() {
         {isStreamer ? (
           <RoleButton onClick={stopStreaming}>Stop Streaming</RoleButton>
         ) : (
-          <RoleButton onClick={startStreaming}>Start Streaming</RoleButton>
+          <RoleButton onClick={startStreaming} disabled={!currentUser}>
+            Start Streaming
+          </RoleButton>
         )}
       </Header>
-
+      {error && <ErrorMessage>{error}</ErrorMessage>}
       <StreamContainer>
         <VideoBoard>
           {isStreamer ? (
-            <LiveStream isStreamer={true} />
+            <LiveStream isStreamer={true} socket={socket} />
           ) : (
             <div>
               <h3>Available Streamers</h3>
@@ -104,12 +200,15 @@ export default function LiveStreamingPage() {
                 </ul>
               )}
               {selectedStreamer && (
-                <LiveStream isStreamer={false} streamerId={selectedStreamer} />
+                <LiveStream
+                  isStreamer={false}
+                  streamerId={selectedStreamer}
+                  socket={socket}
+                />
               )}
             </div>
           )}
         </VideoBoard>
-
         <CommentSection>
           <Comments>
             {comments.map((c, idx) => (
@@ -122,6 +221,7 @@ export default function LiveStreamingPage() {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Comment here..."
+              disabled={!currentUser}
             />
           </form>
         </CommentSection>
@@ -170,6 +270,8 @@ const RoleButton = styled.button`
   font-weight: bold;
   border-radius: 8px;
   cursor: pointer;
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
+  pointer-events: ${(props) => (props.disabled ? "none" : "auto")};
   &:hover {
     background-color: #e60000;
   }
@@ -228,4 +330,10 @@ const CommentInput = styled.input`
   width: 100%;
   background-color: #222;
   color: #fff;
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
+`;
+
+const ErrorMessage = styled.p`
+  color: red;
+  padding: 0.5rem 2rem;
 `;
