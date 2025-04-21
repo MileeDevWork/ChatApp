@@ -4,18 +4,6 @@ import LiveStream from "../components/LiveStream";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 
-// const currentUser = JSON.parse(localStorage.getItem("user"));
-// if (!currentUser || !currentUser.username) {
-//   window.location.href = "/login"; // Redirect immediately if not authenticated
-// }
-
-// const socket = io("http://localhost:5001", {
-//   transports: ["websocket"],
-//   reconnection: true,
-//   reconnectionAttempts: 5,
-//   reconnectionDelay: 1000,
-// });
-
 export default function LiveStreamingPage() {
   const [isStreamer, setIsStreamer] = useState(false);
   const [comment, setComment] = useState("");
@@ -27,35 +15,39 @@ export default function LiveStreamingPage() {
   const [currentUser, setCurrentUser] = useState(undefined);
   const [socket, setSocket] = useState(null);
 
-  // Check authentication on mount
+  // Check authentication on mount (support visitor mode)
   useEffect(() => {
     const checkUser = async () => {
-      if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
-        navigate("/login");
-      } else {
-        try {
-          const user = await JSON.parse(
-            localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-          );
-          if (!user || !user.username) {
-            localStorage.removeItem(process.env.REACT_APP_LOCALHOST_KEY);
-            navigate("/login");
-          } else {
-            setCurrentUser(user);
-          }
-        } catch (error) {
-          console.error("Failed to parse user from localStorage:", error);
+      const userData = localStorage.getItem(
+        process.env.REACT_APP_LOCALHOST_KEY
+      );
+      if (!userData) {
+        // Visitor mode: No user in localStorage, allow access
+        setCurrentUser(undefined);
+        return;
+      }
+
+      try {
+        const user = await JSON.parse(userData);
+        if (!user || !user.username) {
+          // Invalid user data, treat as visitor
           localStorage.removeItem(process.env.REACT_APP_LOCALHOST_KEY);
-          navigate("/login");
+          setCurrentUser(undefined);
+        } else {
+          // Valid user, set currentUser for authenticated mode
+          setCurrentUser(user);
         }
+      } catch (error) {
+        console.error("Failed to parse user from localStorage:", error);
+        localStorage.removeItem(process.env.REACT_APP_LOCALHOST_KEY);
+        setCurrentUser(undefined);
       }
     };
     checkUser();
-  }, [navigate]);
+  }, []);
 
+  // Initialize Socket.IO connection
   useEffect(() => {
-    if (!currentUser) return;
-
     const newSocket = io("http://localhost:5001", {
       transports: ["websocket"],
       reconnection: true,
@@ -66,14 +58,25 @@ export default function LiveStreamingPage() {
 
     newSocket.on("connect", () => {
       console.log("Connected to server:", newSocket.id);
+      if (!currentUser) {
+        newSocket.emit("register-visitor", { nickname: `Visitor_${newSocket.id}` });
+      }
       if (selectedStreamer) {
         newSocket.emit("get-comments", { streamerId: selectedStreamer });
       }
     });
 
+    newSocket.on("disconnect", (reason) => {
+      console.log("Disconnected from server:", reason);
+    });
+
     newSocket.on("streamers-update", (activeStreamers) => {
+      console.log("Received streamers-update:", activeStreamers);
       setStreamers(activeStreamers);
-      if (selectedStreamer && !activeStreamers.find((s) => s.id === selectedStreamer)) {
+      if (
+        selectedStreamer &&
+        !activeStreamers.find((s) => s.id === selectedStreamer)
+      ) {
         setSelectedStreamer(null);
         setComments([]);
         setError("Streamer disconnected");
@@ -109,7 +112,7 @@ export default function LiveStreamingPage() {
       newSocket.off("error");
       newSocket.off("connect_error");
     };
-  }, [selectedStreamer, navigate, currentUser]);
+  }, [navigate]);
 
   const startStreaming = () => {
     if (!currentUser) {
@@ -117,6 +120,7 @@ export default function LiveStreamingPage() {
       navigate("/login");
       return;
     }
+    if (isStreamer) return; // Prevent multiple start-stream calls
     setIsStreamer(true);
     socket.emit("start-stream", {
       username: currentUser.username,
@@ -153,6 +157,10 @@ export default function LiveStreamingPage() {
     navigate("/");
   };
 
+  if (!socket) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Wrapper>
       <Header>
@@ -161,14 +169,16 @@ export default function LiveStreamingPage() {
         {isStreamer ? (
           <RoleButton onClick={stopStreaming}>Stop Streaming</RoleButton>
         ) : (
-          <RoleButton onClick={startStreaming}>Start Streaming</RoleButton>
+          <RoleButton onClick={startStreaming} disabled={!currentUser}>
+            Start Streaming
+          </RoleButton>
         )}
       </Header>
-
+      {error && <ErrorMessage>{error}</ErrorMessage>}
       <StreamContainer>
         <VideoBoard>
           {isStreamer ? (
-            <LiveStream isStreamer={true} />
+            <LiveStream isStreamer={true} socket={socket} />
           ) : (
             <div>
               <h3>Available Streamers</h3>
@@ -190,12 +200,15 @@ export default function LiveStreamingPage() {
                 </ul>
               )}
               {selectedStreamer && (
-                <LiveStream isStreamer={false} streamerId={selectedStreamer} />
+                <LiveStream
+                  isStreamer={false}
+                  streamerId={selectedStreamer}
+                  socket={socket}
+                />
               )}
             </div>
           )}
         </VideoBoard>
-
         <CommentSection>
           <Comments>
             {comments.map((c, idx) => (
@@ -208,6 +221,7 @@ export default function LiveStreamingPage() {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Comment here..."
+              disabled={!currentUser}
             />
           </form>
         </CommentSection>
@@ -256,6 +270,8 @@ const RoleButton = styled.button`
   font-weight: bold;
   border-radius: 8px;
   cursor: pointer;
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
+  pointer-events: ${(props) => (props.disabled ? "none" : "auto")};
   &:hover {
     background-color: #e60000;
   }
@@ -314,5 +330,10 @@ const CommentInput = styled.input`
   width: 100%;
   background-color: #222;
   color: #fff;
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 `;
 
+const ErrorMessage = styled.p`
+  color: red;
+  padding: 0.5rem 2rem;
+`;

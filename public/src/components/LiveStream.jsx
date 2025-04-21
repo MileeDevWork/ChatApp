@@ -1,10 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import io from "socket.io-client";
 import styled from "styled-components";
 
-const socket = io("http://localhost:5001");
-
-const LiveStream = ({ isStreamer, streamerId }) => {
+const LiveStream = ({ isStreamer, streamerId, socket }) => {
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
   const peerConnections = useRef(new Map());
@@ -119,6 +116,7 @@ const LiveStream = ({ isStreamer, streamerId }) => {
       socket.off("offer");
       socket.off("answer");
       socket.off("ice-candidate");
+      socket.off("error");
       peerConnections.current.forEach((pc) => pc.close());
       peerConnections.current.clear();
       if (localVideoRef.current && localVideoRef.current.srcObject) {
@@ -127,7 +125,7 @@ const LiveStream = ({ isStreamer, streamerId }) => {
           .forEach((track) => track.stop());
       }
     };
-  }, [isStreamer, streamerId]);
+  }, [isStreamer, streamerId, socket]);
 
   return (
     <VideoWrapper>
@@ -149,6 +147,7 @@ const VideoWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 
   .live-video {
     width: 100%;
@@ -162,6 +161,13 @@ const VideoWrapper = styled.div`
 const ErrorMessage = styled.p`
   color: red;
   text-align: center;
+  padding: 0.5rem 1rem;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 5px;
 `;
 
 export default LiveStream;
