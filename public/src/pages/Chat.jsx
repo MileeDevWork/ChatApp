@@ -51,12 +51,15 @@ export default function Chat() {
   const goToLiveStreaming = () => {
     navigate("/live");
   };
-
+  const goToChannel = () => {
+    navigate("/channel");
+  };
   return (
     <>
       <Container>
         <h2>Chat Room</h2>
         <LiveButton onClick={goToLiveStreaming}>Live Streaming</LiveButton>
+        <ChannelButton onClick={goToChannel}>Channel</ChannelButton>
         <div className="container">
           <Contacts contacts={contacts} changeChat={handleChatChange} />
           {currentChat === undefined ? (
@@ -104,5 +107,17 @@ const LiveButton = styled.button`
   cursor: pointer;
   &:hover {
     background-color: #ff4a43;
+  }
+`;
+
+const ChannelButton = styled.button`
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  &:hover {
+    background-color: #4CAF50;
   }
 `;

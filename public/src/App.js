@@ -5,9 +5,11 @@ import Chat from "./pages/Chat";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Streaming from "./pages/Streaming";
+import Channel from "./pages/Channel";
+import ChannelChat from "./pages/ChannelChat";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:5001");
 
 export default function App() {
   useEffect(() => {
@@ -22,6 +24,8 @@ export default function App() {
         <Route path="/setAvatar" element={<SetAvatar />} />
         <Route path="/" element={<Chat />} />
         <Route path="/live" element={<Streaming />} />
+        <Route path="/channel" element={<Channel />} />
+        <Route path="/channel/:channelId" element={<ChannelChat />} />
       </Routes>
     </BrowserRouter>
   );

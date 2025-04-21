@@ -21,7 +21,17 @@ module.exports = (io) => {
     socket.on("send-msg", (data) => {
       const sendUserSocket = onlineUsers.get(data.to);
       if (sendUserSocket) {
-        io.to(sendUserSocket).emit("msg-recieve", data.msg);
+        console.log(
+          `Sending message from ${socket.id} to ${sendUserSocket} (user: ${data.to})`
+        );
+        io.to(sendUserSocket).emit("msg-recieve", {
+          text: data.msg?.text,
+          fileUrl: data.msg?.fileUrl,
+          fileName: data.msg?.fileName,
+          fileType: data.msg?.fileType,
+        });
+      } else {
+        console.log(`User ${data.to} offline.`);
       }
     });
 
@@ -29,6 +39,8 @@ module.exports = (io) => {
       if (!activePeers.some((p) => p.id === socket.id)) {
         const { ip, port } = peerInfo;
         activePeers.push({ id: socket.id, ip, port });
+        console.log(`Peer registered: ${ip}:${port} (ID: ${socket.id})`);
+        console.log("Active peers:", activePeers);
         socket.emit("registration-success", activePeers);
       }
     });
@@ -169,11 +181,13 @@ module.exports = (io) => {
 
     socket.on("disconnect", async () => {
       console.log(`Disconnecting socket: ${socket.id}`);
+
       for (let [userId, socketId] of onlineUsers.entries()) {
         if (socketId === socket.id) {
           onlineUsers.delete(userId);
         }
       }
+
       activePeers = activePeers.filter((peer) => peer.id !== socket.id);
       if (!pendingStreams.has(socket.id) && activeStreamers.has(socket.id)) {
         activeStreamers.delete(socket.id);
@@ -181,6 +195,20 @@ module.exports = (io) => {
       console.log("Active streamers after disconnect:", Array.from(activeStreamers.values()));
       io.emit("streamers-update", Array.from(activeStreamers.values()));
       fs.appendFileSync(logFile, `${new Date()} - Peer disconnected: ${socket.id}\n`);
+    });
+  });
+
+  io.on("connection", (socket) => {
+    socket.on("join-channel", (channelId) => {
+      socket.join(channelId);
+    });
+
+    socket.on("send-channel-message", (data) => {
+      const { channelId, senderId, message } = data;
+      socket.to(channelId).emit("channel-message", {
+        senderId,
+        message,
+      });
     });
   });
 };

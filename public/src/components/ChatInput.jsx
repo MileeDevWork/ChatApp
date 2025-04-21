@@ -3,25 +3,54 @@ import { BsEmojiSmileFill } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
 import styled from "styled-components";
 import Picker from "emoji-picker-react";
+import axios from "axios";
 
-export default function ChatInput({ handleSendMsg }) {
+export default function ChatInput({ handleSendMsg, currentChat }) {
   const [msg, setMsg] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [file, setFile] = useState(null);
+
   const handleEmojiPickerhideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
   };
 
   const handleEmojiClick = (event, emojiObject) => {
-    let message = msg;
-    message += emojiObject.emoji;
-    setMsg(message);
+    setMsg((prevMsg) => prevMsg + emojiObject.emoji);
   };
 
-  const sendChat = (event) => {
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const sendChat = async (event) => {
     event.preventDefault();
+    const currentUser = JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
+
     if (msg.length > 0) {
-      handleSendMsg(msg);
+      // Gửi tin nhắn văn bản
+      handleSendMsg({ text: msg });
       setMsg("");
+    }
+
+    if (file) {
+      // Gửi file
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("from", currentUser._id);
+      // formData.append("to", handleSendMsg.currentChat._id); 
+      formData.append("to", currentChat._id);
+
+      try {
+        const res = await axios.post("http://localhost:5001/api/messages/addfilemsg", formData);
+        handleSendMsg({
+          fileUrl: res.data.message.fileUrl,
+          fileName: res.data.message.fileName,
+          fileType: res.data.message.fileType,
+        });
+        setFile(null);
+      } catch (err) {
+        console.error("Error uploading file:", err);
+      }
     }
   };
 
@@ -40,6 +69,27 @@ export default function ChatInput({ handleSendMsg }) {
           onChange={(e) => setMsg(e.target.value)}
           value={msg}
         />
+        <label style={{ cursor: "pointer" }}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            style={{ width: "24px", height: "24px", color: "#4b5563" }}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m0-3-3-3m0 0-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75"
+            />
+          </svg>
+          <input
+            type="file"
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
+        </label>
         <button type="submit">
           <IoMdSend />
         </button>

@@ -11,52 +11,60 @@ export default function ChatContainer({ currentChat, socket }) {
   const scrollRef = useRef();
   const [arrivalMessage, setArrivalMessage] = useState(null);
 
-  useEffect(async () => {
-    const data = await JSON.parse(
-      localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-    );
-    const response = await axios.post(recieveMessageRoute, {
-      from: data._id,
-      to: currentChat._id,
-    });
-    setMessages(response.data);
+  useEffect(() => {
+    const fetchMessages = async () => {
+      const data = await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
+      const response = await axios.post(recieveMessageRoute, {
+        from: data._id,
+        to: currentChat._id,
+      });
+      setMessages(response.data);
+    };
+    if (currentChat) {
+      fetchMessages();
+    }
   }, [currentChat]);
 
   useEffect(() => {
     const getCurrentChat = async () => {
       if (currentChat) {
-        await JSON.parse(
-          localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-        )._id;
+        await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
       }
     };
     getCurrentChat();
   }, [currentChat]);
 
   const handleSendMsg = async (msg) => {
-    const data = await JSON.parse(
-      localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-    );
+    const data = await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
     socket.current.emit("send-msg", {
       to: currentChat._id,
       from: data._id,
       msg,
     });
-    await axios.post(sendMessageRoute, {
-      from: data._id,
-      to: currentChat._id,
-      message: msg,
-    });
+
+    if (msg.text) {
+      await axios.post(sendMessageRoute, {
+        from: data._id,
+        to: currentChat._id,
+        message: msg.text,
+      });
+    }
 
     const msgs = [...messages];
-    msgs.push({ fromSelf: true, message: msg });
+    msgs.push({ fromSelf: true, message: msg.text, fileUrl: msg.fileUrl, fileName: msg.fileName, fileType: msg.fileType });
     setMessages(msgs);
   };
 
   useEffect(() => {
     if (socket.current) {
       socket.current.on("msg-recieve", (msg) => {
-        setArrivalMessage({ fromSelf: false, message: msg });
+        setArrivalMessage({
+          fromSelf: false,
+          message: msg.text,
+          fileUrl: msg.fileUrl,
+          fileName: msg.fileName,
+          fileType: msg.fileType,
+        });
       });
     }
   }, []);
@@ -90,19 +98,32 @@ export default function ChatContainer({ currentChat, socket }) {
           return (
             <div ref={scrollRef} key={uuidv4()}>
               <div
-                className={`message ${
-                  message.fromSelf ? "sended" : "recieved"
-                }`}
+                className={`message ${message.fromSelf ? "sended" : "recieved"
+                  }`}
               >
-                <div className="content ">
-                  <p>{message.message}</p>
+                <div className="content">
+                  {message.fileUrl ? (
+                    <div>
+                      <a
+                        href={message.fileUrl}
+                        download={message.fileName}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {message.fileName ? message.fileName : message.fileUrl.split("/").pop()}
+                      </a>
+                    </div>
+                  ) : (
+                    <p>{message.message}</p>
+                  )}
                 </div>
               </div>
             </div>
           );
         })}
       </div>
-      <ChatInput handleSendMsg={handleSendMsg} />
+      {/* <ChatInput handleSendMsg={handleSendMsg} /> */}
+      <ChatInput handleSendMsg={handleSendMsg} currentChat={currentChat} />
     </Container>
   );
 }
@@ -111,11 +132,7 @@ const Container = styled.div`
   display: grid;
   grid-template-rows: 10% 80% 10%;
   gap: 0.1rem;
-  background-color: #ffffff;
   overflow: hidden;
-  border-radius: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-
   @media screen and (min-width: 720px) and (max-width: 1080px) {
     grid-template-rows: 15% 70% 15%;
   }
@@ -136,14 +153,12 @@ const Container = styled.div`
       .avatar {
         img {
           height: 3rem;
-          border-radius: 50%;
         }
       }
 
       .username {
         h3 {
-          color: #1f2937; /* Darker gray */
-          font-weight: 600;
+          color: #1f2937;
         }
       }
     }
@@ -155,15 +170,15 @@ const Container = styled.div`
     flex-direction: column;
     gap: 1rem;
     overflow: auto;
-    background-color: #fefefe;
 
     &::-webkit-scrollbar {
-      width: 0.4rem;
-    }
+      width: 0.2rem;
 
-    &::-webkit-scrollbar-thumb {
-      background-color: #cbd5e1;
-      border-radius: 1rem;
+      &-thumb {
+        background-color: #cbd5e1;
+        width: 0.1rem;
+        border-radius: 1rem;
+      }
     }
 
     .message {
@@ -171,15 +186,12 @@ const Container = styled.div`
       align-items: center;
 
       .content {
-        max-width: 60%;
+        max-width: 40%;
         overflow-wrap: break-word;
-        padding: 0.75rem 1.25rem;
-        font-size: 1rem;
+        padding: 1rem;
+        font-size: 1.1rem;
         border-radius: 1rem;
         color: #1f2937;
-        background-color: #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-
         @media screen and (min-width: 720px) and (max-width: 1080px) {
           max-width: 70%;
         }
@@ -190,8 +202,7 @@ const Container = styled.div`
       justify-content: flex-end;
 
       .content {
-        background-color: #c7d2fe; /* light indigo */
-        color: #1e40af;
+        background-color: #c7d2fe;
       }
     }
 
@@ -199,10 +210,8 @@ const Container = styled.div`
       justify-content: flex-start;
 
       .content {
-        background-color: #e0f2fe; /* light blue */
-        color: #0369a1;
+        background-color: #e5e7eb;
       }
     }
   }
 `;
-

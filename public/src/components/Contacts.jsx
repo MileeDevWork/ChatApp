@@ -25,6 +25,7 @@ export default function Contacts({ contacts, changeChat }) {
             <img src={Logo} alt="logo" />
             <h3>mmt</h3>
           </div>
+          {/* <div>hi</div> */}
           <div className="contacts">
             {contacts.map((contact, index) => {
               return (
