@@ -27,6 +27,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  status: {
+    type: String,
+    enum: ['online', 'offline'],
+    default: 'offline'
+  },
+  lastSeen: {
+    type: Date,
+    default: Date.now
+  },
 });
 
 module.exports = mongoose.model("Users", userSchema);
