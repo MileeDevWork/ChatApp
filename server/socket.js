@@ -2,6 +2,7 @@ const fs = require("fs");
 const logFile = "connections.log";
 const Stream = require("./models/streamModel");
 const Comment = require("./models/commentModel");
+const User = require("./models/userModel"); 
 
 let activePeers = [];
 const onlineUsers = new Map();
@@ -12,6 +13,57 @@ const pendingStreams = new Set(); // Track sockets that are starting a stream
 module.exports = (io) => {
   io.on("connection", (socket) => {
     console.log(`A user connected: ${socket.id}`);
+
+    // Xử lý online status
+    socket.on("add-user", async (userId) => {
+      try {
+        console.log("User connecting:", userId); // Debug log
+        onlineUsers.set(userId, socket.id);
+        
+        await User.findByIdAndUpdate(userId, {
+          status: 'online',
+          lastSeen: new Date()
+        });
+
+        // Broadcast to all clients
+        io.emit("user-status-update", {
+          userId: userId,
+          status: 'online'
+        });
+
+        // Send current online users list
+        socket.emit("initial-online-users", Array.from(onlineUsers.keys()));
+        console.log("Current online users:", Array.from(onlineUsers.keys())); // Debug log
+      } catch (err) {
+        console.error("Error updating user status:", err);
+      }
+    });
+
+    // Xử lý disconnect
+    socket.on("disconnect", async () => {
+      try {
+        for (let [userId, socketId] of onlineUsers.entries()) {
+          if (socketId === socket.id) {
+            console.log("User disconnecting:", userId); // Debug log
+            onlineUsers.delete(userId);
+            
+            await User.findByIdAndUpdate(userId, {
+              status: 'offline',
+              lastSeen: new Date()
+            });
+
+            io.emit("user-status-update", {
+              userId: userId,
+              status: 'offline'
+            });
+            break;
+          }
+        }
+      } catch (err) {
+        console.error("Error handling disconnect:", err);
+      }
+    });
+
     fs.appendFileSync(logFile, `${new Date()} - Peer connected: ${socket.id}\n`);
 
     socket.on("add-user", (userId) => {
@@ -211,4 +263,5 @@ module.exports = (io) => {
       });
     });
   });
+
 };
