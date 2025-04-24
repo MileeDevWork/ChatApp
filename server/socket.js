@@ -30,14 +30,6 @@ function logConnection(event, socket) {
     
     const logMessage = `[${timestamp}] - ${event} (${detailsStr})\n`;
     fs.appendFileSync(logFile, logMessage);
-
-    // Optional: Temporary debug log to inspect socket properties (comment out after use)
-    /*
-    fs.appendFileSync('debug.log', `[${timestamp}] - Debug: conn.remotePort=${socket.conn?.remotePort}, ` +
-      `request.connection.remotePort=${socket.request?.connection?.remotePort}, ` +
-      `request.socket.remotePort=${socket.request?.socket?.remotePort}, ` +
-      `handshake.address=${JSON.stringify(socket.handshake.address)}\n`);
-    */
   } catch (err) {
     // Silent fail if logging fails
   }
@@ -175,6 +167,24 @@ module.exports = (io) => {
         await newStream.save();
         
         logConnection("Stream started", socket);
+
+        // Notify all online users about the new stream
+        for (const [userId, userSocketId] of onlineUsers.entries()) {
+          // Skip the streamer themselves
+          if (userSocketId !== socket.id) {
+            io.to(userSocketId).emit("new-stream-notification", {
+              streamId: newStream._id,
+              streamerId: socket.id,
+              username,
+              channelId: channelId || "default",
+              startTime: newStream.startTime,
+            });
+            // Find the user's socket to log the notification
+            io.of("/").sockets.get(userSocketId)?.let(userSocket => {
+              logConnection("New stream notification sent", userSocket);
+            });
+          }
+        }
       } catch (error) {
         logConnection("Failed to save stream", socket);
       } finally {
@@ -245,7 +255,7 @@ module.exports = (io) => {
         comment,
       });
       
-      await newComment.save();
+      await newStream.save();
       io.to(`stream_${streamerId}`).emit("receive-comment", {
         comment,
         from,
