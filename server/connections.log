@@ -7758,3 +7758,251 @@ Wed Apr 23 2025 17:27:11 GMT+0700 (Indochina Time) - Peer disconnected: dotMgUdb
 Wed Apr 23 2025 17:27:11 GMT+0700 (Indochina Time) - Peer disconnected: SvFvEjp5eFjsxpsgAAAP
 Wed Apr 23 2025 17:27:18 GMT+0700 (Indochina Time) - Peer disconnected: jAoJU2aXVMhv76KxAAAd
 Wed Apr 23 2025 17:27:18 GMT+0700 (Indochina Time) - Peer disconnected: VGItfO1JzhNmcyNaAAAf
+Wed Apr 23 2025 23:04:32 GMT+0700 (Indochina Time) - Peer connected: OWoYdhInzBV1yTQ7AAAB
+Wed Apr 23 2025 23:04:33 GMT+0700 (Indochina Time) - Peer connected: 2c3RWs1Yuheb_MFgAAAD
+Wed Apr 23 2025 23:04:46 GMT+0700 (Indochina Time) - Peer connected: MggnhqtCb6y_bgZBAAAF
+Wed Apr 23 2025 23:04:54 GMT+0700 (Indochina Time) - Peer connected: XM66MvvcjYxqrkrOAAAH
+Wed Apr 23 2025 23:05:36 GMT+0700 (Indochina Time) - Peer disconnected: MggnhqtCb6y_bgZBAAAF
+Wed Apr 23 2025 23:05:36 GMT+0700 (Indochina Time) - Peer disconnected: XM66MvvcjYxqrkrOAAAH
+Wed Apr 23 2025 23:05:40 GMT+0700 (Indochina Time) - Peer connected: heA5att7Ly66dte-AAAJ
+Wed Apr 23 2025 23:05:49 GMT+0700 (Indochina Time) - Peer connected: 6_0M3rVde8OZq7UPAAAL
+Wed Apr 23 2025 23:16:56 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: KA21h-JAeJy0FAi1AAAB from 127.0.0.1:18843
+Wed Apr 23 2025 23:16:56 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: hudnAEQpZSsnfYDqAAAD from 127.0.0.1:19107
+Wed Apr 23 2025 23:16:57 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: gvuglW4OZa-w1Ab4AAAG from 127.0.0.1:41167
+Wed Apr 23 2025 23:16:57 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: VzHmCzMkiT9Y3ZOzAAAH from 127.0.0.1:45231
+Wed Apr 23 2025 23:16:59 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: gvuglW4OZa-w1Ab4AAAG (127.0.0.1:41167)
+Wed Apr 23 2025 23:16:59 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: VzHmCzMkiT9Y3ZOzAAAH (127.0.0.1:45231)
+Wed Apr 23 2025 23:16:59 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: sBsehoF8SPF3F9zmAAAJ from 127.0.0.1:21446
+Wed Apr 23 2025 23:16:59 GMT+0700 (Indochina Time) - [REGISTRATION_ERROR] {"socketId":"sBsehoF8SPF3F9zmAAAJ","reason":"Invalid peer info"}
+Wed Apr 23 2025 23:16:59 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: 1dTrrxQO2FsUQ5dhAAAL from 127.0.0.1:12820
+Wed Apr 23 2025 23:16:59 GMT+0700 (Indochina Time) - [USER_LOGIN] User login: 67f774230f3b8341b55ad7f3 (1dTrrxQO2FsUQ5dhAAAL) from 127.0.0.1:12820, Session: 2zmcxt34dg3v5qr1efocp
+Wed Apr 23 2025 23:17:01 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: KA21h-JAeJy0FAi1AAAB (127.0.0.1:18843)
+Wed Apr 23 2025 23:17:01 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: hudnAEQpZSsnfYDqAAAD (127.0.0.1:19107)
+Wed Apr 23 2025 23:17:01 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: fDplAf2undtp7njFAAAN from 127.0.0.1:32500
+Wed Apr 23 2025 23:17:01 GMT+0700 (Indochina Time) - [REGISTRATION_ERROR] {"socketId":"fDplAf2undtp7njFAAAN","reason":"Invalid peer info"}
+Wed Apr 23 2025 23:17:01 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: p96sMXFCFVij3UYpAAAP from 127.0.0.1:26675
+Wed Apr 23 2025 23:17:01 GMT+0700 (Indochina Time) - [USER_LOGIN] User login: 67f78a8d5745d815695e4a4e (p96sMXFCFVij3UYpAAAP) from 127.0.0.1:26675, Session: d2wi887lgw6qmia7wsptvo
+Wed Apr 23 2025 23:17:05 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: sBsehoF8SPF3F9zmAAAJ (127.0.0.1:21446)
+Wed Apr 23 2025 23:17:05 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: 1dTrrxQO2FsUQ5dhAAAL (127.0.0.1:12820)
+Wed Apr 23 2025 23:17:05 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: hJCV2aEbeYmwjPCLAAAS from 127.0.0.1:34959
+Wed Apr 23 2025 23:17:05 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: htRpjA0fXoM9RxPYAAAT from 127.0.0.1:59217
+Wed Apr 23 2025 23:17:05 GMT+0700 (Indochina Time) - [REGISTRATION_ERROR] {"socketId":"hJCV2aEbeYmwjPCLAAAS","reason":"Invalid peer info"}
+Wed Apr 23 2025 23:17:05 GMT+0700 (Indochina Time) - [USER_LOGIN] User login: 67f774230f3b8341b55ad7f3 (htRpjA0fXoM9RxPYAAAT) from 127.0.0.1:59217, Session: p25syg4gllloe9kyr0hihc
+Wed Apr 23 2025 23:17:07 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: fDplAf2undtp7njFAAAN (127.0.0.1:32500)
+Wed Apr 23 2025 23:17:07 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: p96sMXFCFVij3UYpAAAP (127.0.0.1:26675)
+Wed Apr 23 2025 23:17:07 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: WptvJWJtU83pGTZaAAAV from 127.0.0.1:33938
+Wed Apr 23 2025 23:17:07 GMT+0700 (Indochina Time) - [REGISTRATION_ERROR] {"socketId":"WptvJWJtU83pGTZaAAAV","reason":"Invalid peer info"}
+Wed Apr 23 2025 23:17:07 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: w69_BUgUXFQ0dFT_AAAX from 127.0.0.1:11788
+Wed Apr 23 2025 23:17:07 GMT+0700 (Indochina Time) - [USER_LOGIN] User login: 67f78a8d5745d815695e4a4e (w69_BUgUXFQ0dFT_AAAX) from 127.0.0.1:11788, Session: wij7bg2xlz99vdd7be4ch
+Wed Apr 23 2025 23:17:15 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: WptvJWJtU83pGTZaAAAV (127.0.0.1:33938)
+Wed Apr 23 2025 23:17:15 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: w69_BUgUXFQ0dFT_AAAX (127.0.0.1:11788)
+Wed Apr 23 2025 23:17:15 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: AvkQ60pYly1L1mOVAAAZ from 127.0.0.1:52432
+Wed Apr 23 2025 23:17:15 GMT+0700 (Indochina Time) - [REGISTRATION_ERROR] {"socketId":"AvkQ60pYly1L1mOVAAAZ","reason":"Invalid peer info"}
+Wed Apr 23 2025 23:17:15 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: _IYCR4qWDGWozyFjAAAb from 127.0.0.1:17174
+Wed Apr 23 2025 23:17:15 GMT+0700 (Indochina Time) - [USER_LOGIN] User login: 67f78a8d5745d815695e4a4e (_IYCR4qWDGWozyFjAAAb) from 127.0.0.1:17174, Session: 97cc2w1d9cb3uiavkaiiq
+Wed Apr 23 2025 23:17:17 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: hJCV2aEbeYmwjPCLAAAS (127.0.0.1:34959)
+Wed Apr 23 2025 23:17:17 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: htRpjA0fXoM9RxPYAAAT (127.0.0.1:59217)
+Wed Apr 23 2025 23:17:17 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: v-0v_KQbzc8VRVF7AAAd from 127.0.0.1:14851
+Wed Apr 23 2025 23:17:17 GMT+0700 (Indochina Time) - [REGISTRATION_ERROR] {"socketId":"v-0v_KQbzc8VRVF7AAAd","reason":"Invalid peer info"}
+Wed Apr 23 2025 23:17:17 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: c72Q4CR1x-zAQNdmAAAf from 127.0.0.1:40175
+Wed Apr 23 2025 23:17:17 GMT+0700 (Indochina Time) - [USER_LOGIN] User login: 67f774230f3b8341b55ad7f3 (c72Q4CR1x-zAQNdmAAAf) from 127.0.0.1:40175, Session: nn0z7cakex90kuxpkc4bq
+Wed Apr 23 2025 23:17:20 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: c72Q4CR1x-zAQNdmAAAf (127.0.0.1:40175)
+Wed Apr 23 2025 23:17:22 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: _IYCR4qWDGWozyFjAAAb (127.0.0.1:17174)
+Wed Apr 23 2025 23:17:22 GMT+0700 (Indochina Time) - [DISCONNECT] Peer disconnected: AvkQ60pYly1L1mOVAAAZ (127.0.0.1:52432)
+Wed Apr 23 2025 23:17:29 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: TZuFnmsNP-VUFQKtAAAh from 127.0.0.1:31111
+Wed Apr 23 2025 23:17:29 GMT+0700 (Indochina Time) - [USER_LOGIN] User login: 67f7753e0f3b8341b55ad7fa (TZuFnmsNP-VUFQKtAAAh) from 127.0.0.1:31111, Session: ctegqjg4gf8m2i8oqlwau
+Wed Apr 23 2025 23:17:37 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: v6WzxRXDcWBqKG4yAAAj from 127.0.0.1:55771
+Wed Apr 23 2025 23:17:37 GMT+0700 (Indochina Time) - [REGISTRATION_ERROR] {"socketId":"v6WzxRXDcWBqKG4yAAAj","reason":"Invalid peer info"}
+Wed Apr 23 2025 23:17:46 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: sr846OnH2qXkxmVkAAAl from 127.0.0.1:40395
+Wed Apr 23 2025 23:17:46 GMT+0700 (Indochina Time) - [USER_LOGIN] User login: 67f775b00f3b8341b55ad80d (sr846OnH2qXkxmVkAAAl) from 127.0.0.1:40395, Session: ujwzb653qld57cx5oegh
+Wed Apr 23 2025 23:18:29 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: IGJzM4G82GaDk4tGAAAB from 127.0.0.1:35605
+Wed Apr 23 2025 23:18:29 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: IYUruK_iCXzQO6tcAAAD from 127.0.0.1:13995
+Wed Apr 23 2025 23:18:29 GMT+0700 (Indochina Time) - [CONNECT] Peer connected: eZL6QVrTcXRV88_sAAAF from 127.0.0.1:12578
+Wed Apr 23 2025 23:18:30 GMT+0700 (Indochina Time) - Peer connected: L1TtOCqJ92YxhD5pAAAB
+Wed Apr 23 2025 23:18:30 GMT+0700 (Indochina Time) - Peer connected: QuUuyJZIxWETNNgHAAAD
+Wed Apr 23 2025 23:18:31 GMT+0700 (Indochina Time) - Peer connected: 5-KvGnJCErr63PS-AAAF
+Wed Apr 23 2025 23:18:32 GMT+0700 (Indochina Time) - Peer connected: 3u8wUoGM7kQDek_qAAAH
+Wed Apr 23 2025 23:18:38 GMT+0700 (Indochina Time) - Peer disconnected: L1TtOCqJ92YxhD5pAAAB
+Wed Apr 23 2025 23:18:38 GMT+0700 (Indochina Time) - Peer disconnected: 3u8wUoGM7kQDek_qAAAH
+Wed Apr 23 2025 23:18:38 GMT+0700 (Indochina Time) - Peer connected: pY6_si4EQxoaaKe1AAAK
+Wed Apr 23 2025 23:18:38 GMT+0700 (Indochina Time) - Peer connected: WI48_woZ_ZgQY4XHAAAL
+Wed Apr 23 2025 23:18:40 GMT+0700 (Indochina Time) - Peer disconnected: QuUuyJZIxWETNNgHAAAD
+Wed Apr 23 2025 23:18:40 GMT+0700 (Indochina Time) - Peer disconnected: 5-KvGnJCErr63PS-AAAF
+Wed Apr 23 2025 23:18:40 GMT+0700 (Indochina Time) - Peer connected: fAIxsRs2VZK9sI7lAAAN
+Wed Apr 23 2025 23:18:40 GMT+0700 (Indochina Time) - Peer connected: 2mhHcEvTFrtuLvwhAAAP
+[2025-04-23T16:23:59.324Z] - Peer connected (socketId=946GkBpCBCzgsvZTAAAC, ip=::1)
+[2025-04-23T16:23:59.334Z] - Peer connected (socketId=RUIwE90Ukda0ZKYRAAAD, ip=::1)
+[2025-04-23T16:24:01.390Z] - Peer connected (socketId=WE9IYe2CKbtqosY9AAAF, ip=::1)
+[2025-04-23T16:24:03.627Z] - Peer connected (socketId=le83wZHQxqFuiv_dAAAH, ip=::1)
+[2025-04-23T16:24:11.284Z] - Peer disconnected (socketId=946GkBpCBCzgsvZTAAAC, ip=::1)
+[2025-04-23T16:24:11.287Z] - Peer disconnected (socketId=RUIwE90Ukda0ZKYRAAAD, ip=::1)
+[2025-04-23T16:24:11.477Z] - Peer connected (socketId=Qnlwm9RIDrYigKpMAAAK, ip=::1)
+[2025-04-23T16:24:11.482Z] - Peer connected (socketId=c3mveLkRBz3hBh_bAAAL, ip=::1)
+[2025-04-23T16:24:11.488Z] - Peer registered (socketId=Qnlwm9RIDrYigKpMAAAK, ip=undefined, port=undefined, clientIp=::1, totalPeers=1)
+[2025-04-23T16:24:11.507Z] - User online status updated (userId=67f7753e0f3b8341b55ad7fa, socketId=c3mveLkRBz3hBh_bAAAL, status=online, ip=::1)
+[2025-04-23T16:24:14.640Z] - Peer disconnected (socketId=WE9IYe2CKbtqosY9AAAF, ip=::1)
+[2025-04-23T16:24:14.641Z] - Peer disconnected (socketId=le83wZHQxqFuiv_dAAAH, ip=::1)
+[2025-04-23T16:24:14.738Z] - Peer connected (socketId=qPYzHx1XyqIGmC-GAAAN, ip=::1)
+[2025-04-23T16:24:14.748Z] - Peer registered (socketId=qPYzHx1XyqIGmC-GAAAN, ip=undefined, port=undefined, clientIp=::1, totalPeers=2)
+[2025-04-23T16:24:14.749Z] - Peer connected (socketId=TT4KJhiWClT1fAUnAAAP, ip=::1)
+[2025-04-23T16:24:14.769Z] - User online status updated (userId=67f775b00f3b8341b55ad80d, socketId=TT4KJhiWClT1fAUnAAAP, status=online, ip=::1)
+[2025-04-23T16:24:46.048Z] - Peer disconnected (socketId=c3mveLkRBz3hBh_bAAAL, ip=::1)
+[2025-04-23T16:24:46.058Z] - User disconnected (userId=67f7753e0f3b8341b55ad7fa, socketId=c3mveLkRBz3hBh_bAAAL, status=offline, ip=::1)
+[2025-04-23T16:24:46.087Z] - Peer connected (socketId=YNAThougfojMMm9jAAAR, ip=::1)
+[2025-04-23T16:24:46.088Z] - Visitor registered (socketId=YNAThougfojMMm9jAAAR, nickname=Visitor_YNAThougfojMMm9jAAAR, ip=::1)
+[2025-04-23T16:24:48.812Z] - Stream started (socketId=YNAThougfojMMm9jAAAR, username=user2, channelId=main, ip=::1, streamId=680914503d43f81b9e540da0)
+[2025-04-23T16:24:51.550Z] - Peer disconnected (socketId=TT4KJhiWClT1fAUnAAAP, ip=::1)
+[2025-04-23T16:24:51.557Z] - User disconnected (userId=67f775b00f3b8341b55ad80d, socketId=TT4KJhiWClT1fAUnAAAP, status=offline, ip=::1)
+[2025-04-23T16:24:51.577Z] - Peer connected (socketId=vBAtDpuII9dJmft7AAAT, ip=::1)
+[2025-04-23T16:24:51.578Z] - Visitor registered (socketId=vBAtDpuII9dJmft7AAAT, nickname=Visitor_vBAtDpuII9dJmft7AAAT, ip=::1)
+[2025-04-23T16:24:52.645Z] - Viewer requested offer (viewerSocketId=vBAtDpuII9dJmft7AAAT, streamerSocketId=YNAThougfojMMm9jAAAR, streamerUsername=user2, viewerIp=::1, channelId=main)
+[2025-04-23T16:24:52.660Z] - WebRTC offer sent (fromSocketId=YNAThougfojMMm9jAAAR, toSocketId=vBAtDpuII9dJmft7AAAT, ip=::1)
+[2025-04-23T16:24:52.662Z] - ICE candidate exchanged (fromSocketId=YNAThougfojMMm9jAAAR, toSocketId=vBAtDpuII9dJmft7AAAT, ip=::1)
+[2025-04-23T16:24:52.662Z] - ICE candidate exchanged (fromSocketId=YNAThougfojMMm9jAAAR, toSocketId=vBAtDpuII9dJmft7AAAT, ip=::1)
+[2025-04-23T16:24:52.673Z] - WebRTC answer sent (fromSocketId=vBAtDpuII9dJmft7AAAT, toSocketId=YNAThougfojMMm9jAAAR, ip=::1)
+[2025-04-23T16:24:52.675Z] - ICE candidate exchanged (fromSocketId=vBAtDpuII9dJmft7AAAT, toSocketId=YNAThougfojMMm9jAAAR, ip=::1)
+[2025-04-23T16:24:59.587Z] - Comment received (fromSocketId=YNAThougfojMMm9jAAAR, username=user2, streamerId=YNAThougfojMMm9jAAAR, commentId=6809145b3d43f81b9e540da3, ip=::1, commentLength=2)
+[2025-04-23T16:25:03.096Z] - Comment received (fromSocketId=vBAtDpuII9dJmft7AAAT, username=user4, streamerId=YNAThougfojMMm9jAAAR, commentId=6809145f3d43f81b9e540da5, ip=::1, commentLength=2)
+[2025-04-23T16:25:18.289Z] - Comment received (fromSocketId=YNAThougfojMMm9jAAAR, username=user2, streamerId=YNAThougfojMMm9jAAAR, commentId=6809146e3d43f81b9e540da7, ip=::1, commentLength=2)
+[2025-04-23T16:28:08.729Z] - Peer disconnected (socketId=qPYzHx1XyqIGmC-GAAAN, ip=::1)
+[2025-04-23T16:28:08.731Z] - Peer disconnected (socketId=vBAtDpuII9dJmft7AAAT, ip=::1)
+[2025-04-23T16:28:10.594Z] - Stream stopped (socketId=YNAThougfojMMm9jAAAR, username=user2, channelId=main, ip=::1, duration=N/A)
+[2025-04-23T16:28:12.157Z] - Stream stop requested but not found (socketId=YNAThougfojMMm9jAAAR, ip=::1)
+[2025-04-23T16:28:12.163Z] - Peer disconnected (socketId=YNAThougfojMMm9jAAAR, ip=::1)
+[2025-04-23T16:28:12.196Z] - Peer connected (socketId=9yQkb8ZU0Swb8zcPAAAV, ip=::1)
+[2025-04-23T16:28:12.206Z] - User online status updated (userId=67f7753e0f3b8341b55ad7fa, socketId=9yQkb8ZU0Swb8zcPAAAV, status=online, ip=::1)
+[2025-04-23T16:28:14.344Z] - Peer disconnected (socketId=Qnlwm9RIDrYigKpMAAAK, ip=::1)
+[2025-04-23T16:28:14.349Z] - Peer disconnected (socketId=9yQkb8ZU0Swb8zcPAAAV, ip=::1)
+[2025-04-23T16:28:14.374Z] - User disconnected (userId=67f7753e0f3b8341b55ad7fa, socketId=9yQkb8ZU0Swb8zcPAAAV, status=offline, ip=::1)
+[2025-04-23T16:28:14.504Z] - Peer connected (socketId=c48LcnyAjuPxLM7OAAAX, ip=::1)
+[2025-04-23T16:28:14.555Z] - Peer connected (socketId=0a2V8PNTl_uU0jFTAAAZ, ip=::1)
+[2025-04-23T16:28:14.558Z] - Peer registered (socketId=c48LcnyAjuPxLM7OAAAX, ip=undefined, port=undefined, clientIp=::1, totalPeers=1)
+[2025-04-23T16:28:14.573Z] - User online status updated (userId=67f7753e0f3b8341b55ad7fa, socketId=0a2V8PNTl_uU0jFTAAAZ, status=online, ip=::1)
+[2025-04-23T16:32:40.318Z] - Socket lutyOVhq-rfHNkBcAAAC connected (ip=::1, userAgent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36)
+[2025-04-23T16:32:40.328Z] - Socket dCx85-KnKj4l2EN4AAAD connected (ip=::1, userAgent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36)
+[2025-04-23T16:32:46.294Z] - Socket lutyOVhq-rfHNkBcAAAC disconnected (ip=::1, wasStreamer=no)
+Wed Apr 23 2025 23:32:46 GMT+0700 (Indochina Time) - Peer disconnected: lutyOVhq-rfHNkBcAAAC
+[2025-04-23T16:32:46.297Z] - Socket dCx85-KnKj4l2EN4AAAD disconnected (ip=::1, wasStreamer=no)
+Wed Apr 23 2025 23:32:46 GMT+0700 (Indochina Time) - Peer disconnected: dCx85-KnKj4l2EN4AAAD
+[2025-04-23T16:32:46.426Z] - Socket MroCuGrDrcT_UCf5AAAF connected (ip=::1, userAgent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36)
+[2025-04-23T16:32:46.478Z] - Socket MroCuGrDrcT_UCf5AAAF registered peer (providedIp=undefined, providedPort=undefined, actualIp=::1)
+[2025-04-23T16:32:46.481Z] - Socket bFxeOqx04ZHSwhubAAAH connected (ip=::1, userAgent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36)
+[2025-04-23T16:32:51.909Z] - Socket 2bt1YJsAdKbZL-YzAAAJ connected (ip=::1, userAgent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36)
+[2025-04-23T16:32:51.916Z] - Socket 2bt1YJsAdKbZL-YzAAAJ registered peer (providedIp=undefined, providedPort=undefined, actualIp=::1)
+[2025-04-23T16:33:02.044Z] - Socket W_BcUWIFaoCPXNSZAAAL connected (ip=::1, userAgent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36)
+[2025-04-23T16:41:38.723Z] - Peer connected (socketId=5yElVZAWa15ZBL9TAAAB, ip=::1, userAgent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36)
+[2025-04-23T16:41:38.835Z] - Peer connected (socketId=ywsp4LuealWzisc3AAAD, ip=::1, userAgent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36)
+[2025-04-23T16:41:38.840Z] - Peer registered (socketId=5yElVZAWa15ZBL9TAAAB, providedIp=not-provided, providedPort=not-provided, actualIp=::1, totalPeers=1)
+[2025-04-23T16:41:38.896Z] - User online status updated (userId=67f7753e0f3b8341b55ad7fa, socketId=ywsp4LuealWzisc3AAAD, status=online, ip=::1)
+[2025-04-23T16:41:45.768Z] - Peer connected (socketId=d1PwjGIZgapdEcxIAAAF, ip=::1, userAgent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36)
+[2025-04-23T16:41:45.778Z] - Peer registered (socketId=d1PwjGIZgapdEcxIAAAF, providedIp=not-provided, providedPort=not-provided, actualIp=::1, totalPeers=2)
+[2025-04-23T16:41:54.315Z] - Peer connected (socketId=6uzSq4XYXfW0FomwAAAH, ip=::1, userAgent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36)
+[2025-04-23T16:41:54.335Z] - User online status updated (userId=67f775910f3b8341b55ad807, socketId=6uzSq4XYXfW0FomwAAAH, status=online, ip=::1)
+[2025-04-23T16:43:10.917Z] - Peer disconnected (socketId=ywsp4LuealWzisc3AAAD, ip=::1, wasStreamer=no, wasPendingStream=no)
+[2025-04-23T16:43:10.928Z] - User offline status updated (userId=67f7753e0f3b8341b55ad7fa, socketId=ywsp4LuealWzisc3AAAD, status=offline, ip=::1)
+[2025-04-23T16:43:10.964Z] - Peer connected (socketId=rnEk712zMqCONa62AAAJ, ip=::1, userAgent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36)
+[2025-04-23T16:43:10.967Z] - Visitor registered (socketId=rnEk712zMqCONa62AAAJ, nickname=Visitor_rnEk712zMqCONa62AAAJ, ip=::1)
+[2025-04-23T16:43:14.603Z] - Peer disconnected (socketId=6uzSq4XYXfW0FomwAAAH, ip=::1, wasStreamer=no, wasPendingStream=no)
+[2025-04-23T16:43:14.618Z] - Peer connected (socketId=bzEdkl5B6n47CZKNAAAL, ip=::1, userAgent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36)
+[2025-04-23T16:43:14.621Z] - User offline status updated (userId=67f775910f3b8341b55ad807, socketId=6uzSq4XYXfW0FomwAAAH, status=offline, ip=::1)
+[2025-04-23T16:43:14.628Z] - Visitor registered (socketId=bzEdkl5B6n47CZKNAAAL, nickname=Visitor_bzEdkl5B6n47CZKNAAAL, ip=::1)
+[2025-04-23T16:43:15.675Z] - Stream started (socketId=bzEdkl5B6n47CZKNAAAL, username=user5, channelId=main, ip=::1, streamId=680918a31fc05de79241bcd7)
+[2025-04-23T16:43:20.974Z] - Viewer requested offer (viewerSocketId=rnEk712zMqCONa62AAAJ, streamerSocketId=bzEdkl5B6n47CZKNAAAL, streamerUsername=user5, viewerIp=::1, channelId=main)
+[2025-04-23T16:43:20.991Z] - WebRTC offer sent (fromSocketId=bzEdkl5B6n47CZKNAAAL, toSocketId=rnEk712zMqCONa62AAAJ, ip=::1)
+[2025-04-23T16:43:20.992Z] - ICE candidate exchanged (fromSocketId=bzEdkl5B6n47CZKNAAAL, toSocketId=rnEk712zMqCONa62AAAJ, ip=::1, candidateType=host)
+[2025-04-23T16:43:20.992Z] - ICE candidate exchanged (fromSocketId=bzEdkl5B6n47CZKNAAAL, toSocketId=rnEk712zMqCONa62AAAJ, ip=::1, candidateType=host)
+[2025-04-23T16:43:21.005Z] - WebRTC answer sent (fromSocketId=rnEk712zMqCONa62AAAJ, toSocketId=bzEdkl5B6n47CZKNAAAL, ip=::1)
+[2025-04-23T16:43:21.005Z] - ICE candidate exchanged (fromSocketId=rnEk712zMqCONa62AAAJ, toSocketId=bzEdkl5B6n47CZKNAAAL, ip=::1, candidateType=host)
+[2025-04-24T01:51:56.243Z] - Peer connected (ip=::1, port=unknown, socketId=wwfsUtIkfMIJplNoAAAC)
+[2025-04-24T01:51:56.315Z] - Peer connected (ip=::1, port=unknown, socketId=qLexSd7CZWrJQJtWAAAD)
+[2025-04-24T01:51:56.338Z] - Peer registered (ip=::1, port=unknown, socketId=wwfsUtIkfMIJplNoAAAC)
+[2025-04-24T01:51:56.422Z] - User online status updated (ip=::1, port=unknown, socketId=qLexSd7CZWrJQJtWAAAD)
+[2025-04-24T01:52:07.793Z] - Peer connected (ip=::1, port=unknown, socketId=FSDAaYswv4yKrxpxAAAF)
+[2025-04-24T01:52:07.803Z] - Peer registered (ip=::1, port=unknown, socketId=FSDAaYswv4yKrxpxAAAF)
+[2025-04-24T01:52:29.660Z] - Peer connected (ip=::1, port=unknown, socketId=yjMShPG0rWcyI08zAAAH)
+[2025-04-24T01:52:29.671Z] - User online status updated (ip=::1, port=unknown, socketId=yjMShPG0rWcyI08zAAAH)
+[2025-04-24T01:57:00.673Z] - Peer connected (ip=127.0.0.1, port=localhost, socketId=14voXmxYGiNgn4xhAAAB)
+[2025-04-24T01:57:02.566Z] - Peer connected (ip=127.0.0.1, port=localhost, socketId=9UQe7epf9VmTC4wUAAAD)
+[2025-04-24T01:57:04.064Z] - Peer connected (ip=127.0.0.1, port=localhost, socketId=7UsoqmIDUP-WlrwmAAAF)
+[2025-04-24T01:57:04.562Z] - Peer connected (ip=127.0.0.1, port=localhost, socketId=2PNsIVOwRKTD_LnWAAAH)
+[2025-04-24T01:57:07.053Z] - Peer disconnected (ip=127.0.0.1, port=localhost, socketId=9UQe7epf9VmTC4wUAAAD)
+[2025-04-24T01:57:07.056Z] - Peer disconnected (ip=127.0.0.1, port=localhost, socketId=2PNsIVOwRKTD_LnWAAAH)
+[2025-04-24T01:57:07.233Z] - Peer connected (ip=127.0.0.1, port=localhost, socketId=2NS4nk3gNcbV0HFPAAAJ)
+[2025-04-24T01:57:07.281Z] - Peer registered (ip=127.0.0.1, port=localhost, socketId=2NS4nk3gNcbV0HFPAAAJ)
+[2025-04-24T01:57:07.282Z] - Peer connected (ip=127.0.0.1, port=localhost, socketId=Qq4qX3EkXROSi3k-AAAL)
+[2025-04-24T01:57:07.325Z] - User online status updated (ip=127.0.0.1, port=localhost, socketId=Qq4qX3EkXROSi3k-AAAL)
+[2025-04-24T01:57:10.283Z] - Peer disconnected (ip=127.0.0.1, port=localhost, socketId=14voXmxYGiNgn4xhAAAB)
+[2025-04-24T01:57:10.285Z] - Peer disconnected (ip=127.0.0.1, port=localhost, socketId=7UsoqmIDUP-WlrwmAAAF)
+[2025-04-24T01:57:10.384Z] - Peer connected (ip=127.0.0.1, port=localhost, socketId=0kWjwuLlP5n3F-QfAAAN)
+[2025-04-24T01:57:10.408Z] - Peer registered (ip=127.0.0.1, port=localhost, socketId=0kWjwuLlP5n3F-QfAAAN)
+[2025-04-24T01:57:10.415Z] - Peer connected (ip=127.0.0.1, port=localhost, socketId=NgRDWISiQ4Y1BJkUAAAP)
+[2025-04-24T01:57:10.433Z] - User online status updated (ip=127.0.0.1, port=localhost, socketId=NgRDWISiQ4Y1BJkUAAAP)
+[2025-04-24T01:57:57.824Z] - Peer disconnected (ip=127.0.0.1, port=localhost, socketId=Qq4qX3EkXROSi3k-AAAL)
+[2025-04-24T01:57:57.887Z] - Peer connected (ip=127.0.0.1, port=localhost, socketId=DXlzAPBdhdLOaUxAAAAR)
+[2025-04-24T01:57:57.888Z] - Visitor registered (ip=127.0.0.1, port=localhost, socketId=DXlzAPBdhdLOaUxAAAAR)
+[2025-04-24T01:57:58.206Z] - User offline status updated (ip=127.0.0.1, port=localhost, socketId=Qq4qX3EkXROSi3k-AAAL)
+[2025-04-24T01:57:59.193Z] - Stream started (ip=127.0.0.1, port=localhost, socketId=DXlzAPBdhdLOaUxAAAAR)
+[2025-04-24T01:58:02.816Z] - Peer disconnected (ip=127.0.0.1, port=localhost, socketId=NgRDWISiQ4Y1BJkUAAAP)
+[2025-04-24T01:58:02.837Z] - User offline status updated (ip=127.0.0.1, port=localhost, socketId=NgRDWISiQ4Y1BJkUAAAP)
+[2025-04-24T01:58:02.839Z] - Peer connected (ip=127.0.0.1, port=localhost, socketId=dFXaVoOF0HKQn-f4AAAT)
+[2025-04-24T01:58:02.839Z] - Visitor registered (ip=127.0.0.1, port=localhost, socketId=dFXaVoOF0HKQn-f4AAAT)
+[2025-04-24T01:58:04.064Z] - Viewer requested offer (ip=127.0.0.1, port=localhost, socketId=dFXaVoOF0HKQn-f4AAAT)
+[2025-04-24T01:58:04.081Z] - WebRTC offer sent (ip=127.0.0.1, port=localhost, socketId=DXlzAPBdhdLOaUxAAAAR)
+[2025-04-24T01:58:04.082Z] - ICE candidate exchanged (ip=127.0.0.1, port=localhost, socketId=DXlzAPBdhdLOaUxAAAAR)
+[2025-04-24T01:58:04.082Z] - ICE candidate exchanged (ip=127.0.0.1, port=localhost, socketId=DXlzAPBdhdLOaUxAAAAR)
+[2025-04-24T01:58:04.094Z] - WebRTC answer sent (ip=127.0.0.1, port=localhost, socketId=dFXaVoOF0HKQn-f4AAAT)
+[2025-04-24T01:58:04.095Z] - ICE candidate exchanged (ip=127.0.0.1, port=localhost, socketId=dFXaVoOF0HKQn-f4AAAT)
+[2025-04-24T01:58:09.871Z] - Comment received (ip=127.0.0.1, port=localhost, socketId=DXlzAPBdhdLOaUxAAAAR)
+[2025-04-24T01:58:14.405Z] - Comment received (ip=127.0.0.1, port=localhost, socketId=dFXaVoOF0HKQn-f4AAAT)
+[2025-04-24T01:58:21.750Z] - Stream stopped (ip=127.0.0.1, port=localhost, socketId=DXlzAPBdhdLOaUxAAAAR)
+[2025-04-24T01:58:26.402Z] - Stream stop requested but not found (ip=127.0.0.1, port=localhost, socketId=DXlzAPBdhdLOaUxAAAAR)
+[2025-04-24T01:58:26.406Z] - Peer disconnected (ip=127.0.0.1, port=localhost, socketId=DXlzAPBdhdLOaUxAAAAR)
+[2025-04-24T01:58:26.445Z] - Peer connected (ip=127.0.0.1, port=localhost, socketId=57pOjxGRQoq-S_lzAAAV)
+[2025-04-24T01:58:26.452Z] - User online status updated (ip=127.0.0.1, port=localhost, socketId=57pOjxGRQoq-S_lzAAAV)
+[2025-04-24T01:58:28.151Z] - Stream stop requested but not found (ip=127.0.0.1, port=localhost, socketId=dFXaVoOF0HKQn-f4AAAT)
+[2025-04-24T01:58:28.157Z] - Peer disconnected (ip=127.0.0.1, port=localhost, socketId=dFXaVoOF0HKQn-f4AAAT)
+[2025-04-24T01:58:28.176Z] - Peer connected (ip=127.0.0.1, port=localhost, socketId=UNn8Oq069scFG56dAAAX)
+[2025-04-24T01:58:28.189Z] - User online status updated (ip=127.0.0.1, port=localhost, socketId=UNn8Oq069scFG56dAAAX)
+[2025-04-24T01:59:43.756Z] - Peer disconnected (ip=127.0.0.1, port=localhost, socketId=2NS4nk3gNcbV0HFPAAAJ)
+[2025-04-24T01:59:43.762Z] - Peer disconnected (ip=127.0.0.1, port=localhost, socketId=57pOjxGRQoq-S_lzAAAV)
+[2025-04-24T01:59:43.770Z] - User offline status updated (ip=127.0.0.1, port=localhost, socketId=57pOjxGRQoq-S_lzAAAV)
+[2025-04-24T01:59:46.476Z] - Peer disconnected (ip=127.0.0.1, port=localhost, socketId=0kWjwuLlP5n3F-QfAAAN)
+[2025-04-24T01:59:46.478Z] - Peer disconnected (ip=127.0.0.1, port=localhost, socketId=UNn8Oq069scFG56dAAAX)
+[2025-04-24T01:59:46.482Z] - User offline status updated (ip=127.0.0.1, port=localhost, socketId=UNn8Oq069scFG56dAAAX)
+[2025-04-24T02:06:59.721Z] - Peer connected (ip=127.0.0.1, port=53422, socketId=Bgg28IxGXaVHFBJNAAAB)
+[2025-04-24T02:06:59.829Z] - Peer registered (ip=127.0.0.1, port=53422, socketId=Bgg28IxGXaVHFBJNAAAB)
+[2025-04-24T02:06:59.841Z] - Peer connected (ip=127.0.0.1, port=53425, socketId=r0FrQO0hki9goepBAAAD)
+[2025-04-24T02:06:59.869Z] - User online status updated (ip=127.0.0.1, port=53425, socketId=r0FrQO0hki9goepBAAAD)
+[2025-04-24T02:07:07.489Z] - Peer connected (ip=127.0.0.1, port=53467, socketId=68XagmZnOqiv7_iMAAAF)
+[2025-04-24T02:07:07.496Z] - Peer registered (ip=127.0.0.1, port=53467, socketId=68XagmZnOqiv7_iMAAAF)
+[2025-04-24T02:07:18.590Z] - Peer connected (ip=127.0.0.1, port=53519, socketId=CiJI-Uaouf-Q6TaWAAAH)
+[2025-04-24T02:07:18.597Z] - User online status updated (ip=127.0.0.1, port=53519, socketId=CiJI-Uaouf-Q6TaWAAAH)
+[2025-04-24T02:07:32.167Z] - Peer disconnected (ip=127.0.0.1, port=53425, socketId=r0FrQO0hki9goepBAAAD)
+[2025-04-24T02:07:32.175Z] - User offline status updated (ip=127.0.0.1, port=53425, socketId=r0FrQO0hki9goepBAAAD)
+[2025-04-24T02:07:32.208Z] - Peer connected (ip=127.0.0.1, port=53577, socketId=tU25Cerompc5n4rIAAAJ)
+[2025-04-24T02:07:32.209Z] - Visitor registered (ip=127.0.0.1, port=53577, socketId=tU25Cerompc5n4rIAAAJ)
+[2025-04-24T02:07:34.678Z] - Stream started (ip=127.0.0.1, port=53577, socketId=tU25Cerompc5n4rIAAAJ)
+[2025-04-24T02:07:36.298Z] - Peer disconnected (ip=127.0.0.1, port=53519, socketId=CiJI-Uaouf-Q6TaWAAAH)
+[2025-04-24T02:07:36.307Z] - User offline status updated (ip=127.0.0.1, port=53519, socketId=CiJI-Uaouf-Q6TaWAAAH)
+[2025-04-24T02:07:36.316Z] - Peer connected (ip=127.0.0.1, port=53598, socketId=NYYJ5KxtCxvgRVR-AAAL)
+[2025-04-24T02:07:36.317Z] - Visitor registered (ip=127.0.0.1, port=53598, socketId=NYYJ5KxtCxvgRVR-AAAL)
+[2025-04-24T02:07:37.669Z] - Viewer requested offer (ip=127.0.0.1, port=53598, socketId=NYYJ5KxtCxvgRVR-AAAL)
+[2025-04-24T02:07:37.682Z] - WebRTC offer sent (ip=127.0.0.1, port=53577, socketId=tU25Cerompc5n4rIAAAJ)
+[2025-04-24T02:07:37.684Z] - ICE candidate exchanged (ip=127.0.0.1, port=53577, socketId=tU25Cerompc5n4rIAAAJ)
+[2025-04-24T02:07:37.684Z] - ICE candidate exchanged (ip=127.0.0.1, port=53577, socketId=tU25Cerompc5n4rIAAAJ)
+[2025-04-24T02:07:37.692Z] - WebRTC answer sent (ip=127.0.0.1, port=53598, socketId=NYYJ5KxtCxvgRVR-AAAL)
+[2025-04-24T02:07:37.694Z] - ICE candidate exchanged (ip=127.0.0.1, port=53598, socketId=NYYJ5KxtCxvgRVR-AAAL)
+[2025-04-24T02:07:56.329Z] - Comment received (ip=127.0.0.1, port=53577, socketId=tU25Cerompc5n4rIAAAJ)
+[2025-04-24T02:08:00.773Z] - Comment received (ip=127.0.0.1, port=53598, socketId=NYYJ5KxtCxvgRVR-AAAL)
+[2025-04-24T02:08:30.275Z] - Stream stopped (ip=127.0.0.1, port=53577, socketId=tU25Cerompc5n4rIAAAJ)
+[2025-04-24T02:08:31.306Z] - Stream stop requested but not found (ip=127.0.0.1, port=53577, socketId=tU25Cerompc5n4rIAAAJ)
+[2025-04-24T02:08:31.310Z] - Peer disconnected (ip=127.0.0.1, port=53577, socketId=tU25Cerompc5n4rIAAAJ)
+[2025-04-24T02:08:31.358Z] - Peer connected (ip=127.0.0.1, port=53817, socketId=hgSMU_oHLj555QWoAAAN)
+[2025-04-24T02:08:31.368Z] - User online status updated (ip=127.0.0.1, port=53817, socketId=hgSMU_oHLj555QWoAAAN)
+[2025-04-24T02:08:48.824Z] - Stream stop requested but not found (ip=127.0.0.1, port=53598, socketId=NYYJ5KxtCxvgRVR-AAAL)
+[2025-04-24T02:08:48.828Z] - Peer disconnected (ip=127.0.0.1, port=53598, socketId=NYYJ5KxtCxvgRVR-AAAL)
+[2025-04-24T02:08:48.851Z] - Peer connected (ip=127.0.0.1, port=53906, socketId=lRq9gfa-KM_hbDD_AAAP)
+[2025-04-24T02:08:48.855Z] - User online status updated (ip=127.0.0.1, port=53906, socketId=lRq9gfa-KM_hbDD_AAAP)
+[2025-04-24T02:08:52.932Z] - Peer disconnected (ip=127.0.0.1, port=53906, socketId=lRq9gfa-KM_hbDD_AAAP)
+[2025-04-24T02:09:00.140Z] - Peer connected (ip=127.0.0.1, port=53962, socketId=PNihn_RwT6d63JcTAAAR)
+[2025-04-24T02:09:00.170Z] - User online status updated (ip=127.0.0.1, port=53962, socketId=PNihn_RwT6d63JcTAAAR)

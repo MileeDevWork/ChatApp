@@ -7,17 +7,63 @@ const User = require("./models/userModel");
 let activePeers = [];
 const onlineUsers = new Map();
 global.onlineUsers = onlineUsers;
-const activeStreamers = new Map(); // Changed from Set to Map
-const pendingStreams = new Set(); // Track sockets that are starting a stream
+const activeStreamers = new Map();
+const pendingStreams = new Set();
+
+// Enhanced logging function for connection events with only ip, port, socketId
+function logConnection(event, socket) {
+  try {
+    const timestamp = new Date().toISOString();
+    
+    // Get the best available client IP
+    const ip = getClientIp(socket);
+    
+    // Get the port from socket (try multiple sources)
+    const port = socket.conn?.remotePort || 
+                 socket.request?.connection?.remotePort || 
+                 socket.request?.socket?.remotePort || 
+                 socket.handshake.address?.port || 
+                 'no-port';
+    
+    // Only log ip, port, and socketId
+    const detailsStr = `ip=${ip}, port=${port}, socketId=${socket.id}`;
+    
+    const logMessage = `[${timestamp}] - ${event} (${detailsStr})\n`;
+    fs.appendFileSync(logFile, logMessage);
+
+    // Optional: Temporary debug log to inspect socket properties (comment out after use)
+    /*
+    fs.appendFileSync('debug.log', `[${timestamp}] - Debug: conn.remotePort=${socket.conn?.remotePort}, ` +
+      `request.connection.remotePort=${socket.request?.connection?.remotePort}, ` +
+      `request.socket.remotePort=${socket.request?.socket?.remotePort}, ` +
+      `handshake.address=${JSON.stringify(socket.handshake.address)}\n`);
+    */
+  } catch (err) {
+    // Silent fail if logging fails
+  }
+}
+
+// Function to get the best available client IP
+function getClientIp(socket) {
+  const forwardedFor = socket.handshake.headers['x-forwarded-for'];
+  const realIp = socket.handshake.headers['x-real-ip'];
+  const address = socket.handshake.address?.address || socket.handshake.address;
+  
+  // Prioritize 127.0.0.1 for localhost over ::1
+  if (address === '::1' || address === '::ffff:127.0.0.1') {
+    return '127.0.0.1';
+  }
+  return forwardedFor || realIp || address || 'unknown';
+}
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
-    console.log(`A user connected: ${socket.id}`);
+    // Log connection
+    logConnection("Peer connected", socket);
 
     // Xử lý online status
     socket.on("add-user", async (userId) => {
       try {
-        console.log("User connecting:", userId); // Debug log
         onlineUsers.set(userId, socket.id);
         
         await User.findByIdAndUpdate(userId, {
@@ -33,9 +79,10 @@ module.exports = (io) => {
 
         // Send current online users list
         socket.emit("initial-online-users", Array.from(onlineUsers.keys()));
-        console.log("Current online users:", Array.from(onlineUsers.keys())); // Debug log
+        
+        logConnection("User online status updated", socket);
       } catch (err) {
-        console.error("Error updating user status:", err);
+        logConnection("Error updating user status", socket);
       }
     });
 
@@ -44,7 +91,6 @@ module.exports = (io) => {
       try {
         for (let [userId, socketId] of onlineUsers.entries()) {
           if (socketId === socket.id) {
-            console.log("User disconnecting:", userId); // Debug log
             onlineUsers.delete(userId);
             
             await User.findByIdAndUpdate(userId, {
@@ -56,15 +102,15 @@ module.exports = (io) => {
               userId: userId,
               status: 'offline'
             });
+            
+            logConnection("User offline status updated", socket);
             break;
           }
         }
       } catch (err) {
-        console.error("Error handling disconnect:", err);
+        logConnection("Error handling disconnect", socket);
       }
     });
-
-    fs.appendFileSync(logFile, `${new Date()} - Peer connected: ${socket.id}\n`);
 
     socket.on("add-user", (userId) => {
       onlineUsers.set(userId, socket.id);
@@ -73,17 +119,12 @@ module.exports = (io) => {
     socket.on("send-msg", (data) => {
       const sendUserSocket = onlineUsers.get(data.to);
       if (sendUserSocket) {
-        console.log(
-          `Sending message from ${socket.id} to ${sendUserSocket} (user: ${data.to})`
-        );
         io.to(sendUserSocket).emit("msg-recieve", {
           text: data.msg?.text,
           fileUrl: data.msg?.fileUrl,
           fileName: data.msg?.fileName,
           fileType: data.msg?.fileType,
         });
-      } else {
-        console.log(`User ${data.to} offline.`);
       }
     });
 
@@ -91,9 +132,9 @@ module.exports = (io) => {
       if (!activePeers.some((p) => p.id === socket.id)) {
         const { ip, port } = peerInfo;
         activePeers.push({ id: socket.id, ip, port });
-        console.log(`Peer registered: ${ip}:${port} (ID: ${socket.id})`);
-        console.log("Active peers:", activePeers);
         socket.emit("registration-success", activePeers);
+        
+        logConnection("Peer registered", socket);
       }
     });
 
@@ -101,6 +142,8 @@ module.exports = (io) => {
       socket.username = nickname || `Visitor_${socket.id}`;
       socket.userId = null;
       socket.isVisitor = true;
+      
+      logConnection("Visitor registered", socket);
     });
 
     socket.on("get-peer-list", () => {
@@ -109,21 +152,20 @@ module.exports = (io) => {
     });
 
     socket.on("start-stream", async (data) => {
-      console.log("Received start-stream:", data);
       const { channelId, username } = data;
       if (!username || username === "Guest") {
-        console.log(`Authentication failed for ${socket.id}: Invalid username`);
         socket.emit("error", { message: "Authentication required to start streaming" });
+        
+        logConnection("Stream start failed - auth required", socket);
         return;
       }
       socket.username = username;
       socket.isVisitor = false;
-      pendingStreams.add(socket.id); // Mark this socket as starting a stream
+      pendingStreams.add(socket.id);
       const streamer = { id: socket.id, username, channelId: channelId || "default" };
-      activeStreamers.set(socket.id, streamer); // Use Map to store streamers
-      console.log("Active streamers after start:", Array.from(activeStreamers.values()));
+      activeStreamers.set(socket.id, streamer);
       io.emit("streamers-update", Array.from(activeStreamers.values()));
-      // Save to database after emitting streamers-update
+      
       try {
         const newStream = new Stream({
           streamerId: socket.id,
@@ -131,24 +173,26 @@ module.exports = (io) => {
           channelId: channelId || "default",
         });
         await newStream.save();
-        fs.appendFileSync(logFile, `${new Date()} - Stream started by ${socket.id} (${username})\n`);
+        
+        logConnection("Stream started", socket);
       } catch (error) {
-        console.error(`Failed to save stream for ${socket.id}:`, error);
+        logConnection("Failed to save stream", socket);
       } finally {
-        pendingStreams.delete(socket.id); // Clear the pending flag
+        pendingStreams.delete(socket.id);
       }
     });
 
     socket.on("stop-stream", async () => {
-      console.log(`Stop-stream received from ${socket.id}`);
       if (activeStreamers.has(socket.id)) {
+        const streamer = activeStreamers.get(socket.id);
         activeStreamers.delete(socket.id);
+        
+        logConnection("Stream stopped", socket);
       } else {
-        console.log(`Streamer ${socket.id} not found in activeStreamers`);
+        logConnection("Stream stop requested but not found", socket);
       }
-      console.log("Active streamers after stop:", Array.from(activeStreamers.values()));
+      
       io.emit("streamers-update", Array.from(activeStreamers.values()));
-      fs.appendFileSync(logFile, `${new Date()} - Stream stopped by ${socket.id}\n`);
     });
 
     socket.emit("streamers-update", Array.from(activeStreamers.values()));
@@ -162,32 +206,35 @@ module.exports = (io) => {
       if (streamer) {
         socket.join(`stream_${streamerId}`);
         io.to(streamerId).emit("request-offer", { from: socket.id });
-        fs.appendFileSync(
-          logFile,
-          `${new Date()} - Viewer ${socket.id} requested offer from ${streamerId}\n`
-        );
+        
+        logConnection("Viewer requested offer", socket);
       } else {
-        console.log(`Streamer ${streamerId} not found for viewer ${socket.id}`);
         socket.emit("error", { message: "Streamer not found" });
+        
+        logConnection("Offer request failed - streamer not found", socket);
       }
     });
 
     socket.on("offer", ({ offer, to }) => {
       io.to(to).emit("offer", { offer, from: socket.id });
-      fs.appendFileSync(logFile, `${new Date()} - Offer sent from ${socket.id} to ${to}\n`);
+      
+      logConnection("WebRTC offer sent", socket);
     });
 
     socket.on("answer", ({ answer, to }) => {
       io.to(to).emit("answer", { answer, from: socket.id });
-      fs.appendFileSync(logFile, `${new Date()} - Answer sent from ${socket.id} to ${to}\n`);
+      
+      logConnection("WebRTC answer sent", socket);
     });
 
     socket.on("send-comment", async ({ comment, streamerId, username }) => {
       if (!username || username === "Guest") {
-        console.log(`Blocked comment from unauthenticated user: ${socket.id}`);
         socket.emit("error", { message: "Authentication required to comment" });
+        
+        logConnection("Comment blocked - auth required", socket);
         return;
       }
+      
       socket.username = username;
       socket.isVisitor = false;
       const from = socket.id;
@@ -197,6 +244,7 @@ module.exports = (io) => {
         username,
         comment,
       });
+      
       await newComment.save();
       io.to(`stream_${streamerId}`).emit("receive-comment", {
         comment,
@@ -208,10 +256,8 @@ module.exports = (io) => {
         from,
         username,
       });
-      fs.appendFileSync(
-        logFile,
-        `${new Date()} - Comment by ${username} on stream ${streamerId}: ${comment}\n`
-      );
+      
+      logConnection("Comment received", socket);
     });
 
     socket.on("get-comments", async ({ streamerId }) => {
@@ -223,7 +269,8 @@ module.exports = (io) => {
 
     socket.on("ice-candidate", ({ candidate, to }) => {
       io.to(to).emit("ice-candidate", { candidate, from: socket.id });
-      fs.appendFileSync(logFile, `${new Date()} - ICE candidate sent from ${socket.id} to ${to}\n`);
+      
+      logConnection("ICE candidate exchanged", socket);
     });
 
     socket.on("get-stream-history", async () => {
@@ -232,7 +279,7 @@ module.exports = (io) => {
     });
 
     socket.on("disconnect", async () => {
-      console.log(`Disconnecting socket: ${socket.id}`);
+      logConnection("Peer disconnected", socket);
 
       for (let [userId, socketId] of onlineUsers.entries()) {
         if (socketId === socket.id) {
@@ -244,15 +291,16 @@ module.exports = (io) => {
       if (!pendingStreams.has(socket.id) && activeStreamers.has(socket.id)) {
         activeStreamers.delete(socket.id);
       }
-      console.log("Active streamers after disconnect:", Array.from(activeStreamers.values()));
+      
       io.emit("streamers-update", Array.from(activeStreamers.values()));
-      fs.appendFileSync(logFile, `${new Date()} - Peer disconnected: ${socket.id}\n`);
     });
   });
 
   io.on("connection", (socket) => {
     socket.on("join-channel", (channelId) => {
       socket.join(channelId);
+      
+      logConnection("User joined channel", socket);
     });
 
     socket.on("send-channel-message", (data) => {
@@ -261,7 +309,8 @@ module.exports = (io) => {
         senderId,
         message,
       });
+      
+      logConnection("Channel message sent", socket);
     });
   });
-
 };
