@@ -36,3 +36,40 @@ cd server
 yarn start
 ```
 Done! Now open localhost:3000 in your browser.
+
+## Running the Application
+
+1. Find your IP address:
+```shell
+# Open Command Prompt and run
+ipconfig
+# Look for IPv4 Address under your network adapter
+```
+
+2. Update the IP in `/public/.env`:
+```env
+REACT_APP_SERVER_URL="http://YOUR_IP:5001"
+```
+
+3. Start the backend server:
+```shell
+cd server
+npm start
+```
+
+4. In a new terminal, start the frontend:
+```shell
+cd public
+npm start
+```
+
+5. Access the application:
+- On your machine: http://localhost:3000
+- From other devices on the same network: http://YOUR_IP:3000
+
+## Troubleshooting
+
+1. If other devices can't connect:
+- Check firewall settings
+- Ensure all devices are on the same network
+- Verify correct IP address in .env file

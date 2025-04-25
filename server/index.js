@@ -12,7 +12,12 @@ const path = require("path");
 
 require("dotenv").config();
 
-app.use(cors());
+// app.use(cors());
+//đổi thành địa chỉ IP của máy chủ
+app.use(cors({
+  origin: ["http://localhost:3000", "http://192.168.1.6:3000"],
+  credentials: true,
+}));
 app.use(express.json());
 
 // Các routes
@@ -45,7 +50,7 @@ const server = http.createServer(app);
 // Cấu hình socket.io
 const io = socket(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "http://192.168.1.6:3000"],
     methods: ["GET", "POST"],
     credentials: true,
   },
