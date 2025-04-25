@@ -9,7 +9,9 @@ import Channel from "./pages/Channel";
 import ChannelChat from "./pages/ChannelChat";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5001");
+// const socket = io("http://localhost:5001");
+// đổi thành địa chỉ IP của máy chủ
+const socket = io(process.env.REACT_APP_SERVER_URL); 
 
 export default function App() {
   useEffect(() => {

@@ -1,9 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { io } from "socket.io-client";
+
+// Thay đổi từ localhost thành IP của server
+const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
 export default function ChannelChat() {
   const { channelId } = useParams();
@@ -13,126 +16,69 @@ export default function ChannelChat() {
   const [members, setMembers] = useState([]);
   const [channelName, setChannelName] = useState("");
   const [channels, setChannels] = useState([]);
-  const [newMemberUsername, setNewMemberUsername] = useState("");
   const scrollRef = useRef();
   const socket = useRef();
-  // Thêm state mới
   const [users, setUsers] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]);
-
-  // Thêm function để fetch users
-  const fetchUsers = async () => {
-    try {
-      const currentUser = getCurrentUser();
-      const response = await axios.get(`http://localhost:5001/api/auth/allusers/${currentUser._id}`);
-      setUsers(response.data);
-    } catch (err) {
-      console.error("Error fetching users:", err);
-    }
-  };
-
-  // Thêm useEffect để load users
-  useEffect(() => {
-    fetchUsers();
-  }, []);
 
   const getCurrentUser = () => {
     return JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
   };
 
-  const fetchMessages = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:5001/api/channels/messages/${channelId}`);
+      const currentUser = getCurrentUser();
+      const response = await axios.get(`${SERVER_URL}/api/auth/allusers/${currentUser._id}`);
+      setUsers(response.data);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    }
+  }, []);
+
+  const fetchMessages = useCallback(async () => {
+    try {
+      const res = await axios.get(`${SERVER_URL}/api/channels/messages/${channelId}`);
       setMessages(res.data.messages);
     } catch (err) {
       console.error("Error fetching messages:", err);
     }
-  };
+  }, [channelId]);
 
-  const fetchMembers = async () => {
+  const fetchMembers = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:5001/api/channels/${channelId}/members`);
+      const res = await axios.get(`${SERVER_URL}/api/channels/${channelId}/members`);
       setMembers(res.data.members);
     } catch (err) {
       console.error("Error fetching members:", err);
     }
-  };
+  }, [channelId]);
 
-  const fetchChannels = async () => {
+  const fetchChannels = useCallback(async () => {
     try {
       const user = getCurrentUser();
-      const res = await axios.get(`http://localhost:5001/api/channels/user/${user._id}`);
+      const res = await axios.get(`${SERVER_URL}/api/channels/user/${user._id}`);
       setChannels(res.data.channels);
     } catch (err) {
       console.error("Error fetching channels:", err);
     }
-  };
+  }, []);
 
-  const handleCreateChannel = async (e) => {
-    e.preventDefault();
-    const user = getCurrentUser();
-    if (!channelName.trim()) return;
-
-    try {
-      const res = await axios.post("http://localhost:5001/api/channels/create", {
-        name: channelName,
-        creator: [user._id],
-      });
-
-      alert("Tạo kênh thành công!");
-      setChannelName("");
-      fetchChannels();
-      navigate(`/channel/${res.data.channel._id}`);
-    } catch (err) {
-      console.error("Tạo kênh thất bại:", err);
-      alert("Tạo kênh thất bại.");
-    }
-  };
-
-  const handleAddMember = async () => {
-    try {
-      for (const userId of selectedMembers) {
-        await axios.post("http://localhost:5001/api/channels/addmember", {
-          channelId,
-          userId
-        });
-      }
-      alert("Thêm thành viên thành công!");
-      setSelectedMembers([]);
-      fetchMembers();
-    } catch (err) {
-      console.error("Lỗi khi thêm thành viên:", err);
-      alert("Không thể thêm thành viên.");
-    }
-  };
-  const handleLeaveChannel = async () => {
-    const user = getCurrentUser();
-    try {
-      await axios.post("http://localhost:5001/api/channels/leave", {
-        channelId,
-        userId: user._id,
-      });
-      alert("Bạn đã rời khỏi kênh.");
-      fetchChannels();
-      navigate("/");
-    } catch (err) {
-      console.error("Lỗi khi rời kênh:", err);
-      alert("Không thể rời kênh.");
-    }
-  };
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   useEffect(() => {
     fetchMessages();
     fetchMembers();
     fetchChannels();
-  }, [channelId]);
+  }, [channelId, fetchMessages, fetchMembers, fetchChannels]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
-    socket.current = io("http://localhost:5001");
+    socket.current = io(SERVER_URL);
     socket.current.emit("join-channel", channelId);
 
     socket.current.on("channel-message", async ({ senderId, message }) => {
@@ -151,9 +97,65 @@ export default function ChannelChat() {
     });
 
     return () => {
-      socket.current.disconnect();
+      if (socket.current) {
+        socket.current.disconnect();
+      }
     };
   }, [channelId, members]);
+
+  const handleCreateChannel = async (e) => {
+    e.preventDefault();
+    const user = getCurrentUser();
+    if (!channelName.trim()) return;
+
+    try {
+      const res = await axios.post(`${SERVER_URL}/api/channels/create`, {
+        name: channelName,
+        creator: [user._id],
+      });
+
+      alert("Tạo kênh thành công!");
+      setChannelName("");
+      fetchChannels();
+      navigate(`/channel/${res.data.channel._id}`);
+    } catch (err) {
+      console.error("Tạo kênh thất bại:", err);
+      alert("Tạo kênh thất bại.");
+    }
+  };
+
+  const handleAddMember = async () => {
+    try {
+      for (const userId of selectedMembers) {
+        await axios.post(`${SERVER_URL}/api/channels/addmember`, {
+          channelId,
+          userId
+        });
+      }
+      alert("Thêm thành viên thành công!");
+      setSelectedMembers([]);
+      fetchMembers();
+    } catch (err) {
+      console.error("Lỗi khi thêm thành viên:", err);
+      alert("Không thể thêm thành viên.");
+    }
+  };
+
+  const handleLeaveChannel = async () => {
+    const user = getCurrentUser();
+    try {
+      await axios.post(`${SERVER_URL}/api/channels/leave`, {
+        channelId,
+        userId: user._id,
+      });
+      alert("Bạn đã rời khỏi kênh.");
+      fetchChannels();
+      navigate("/");
+    } catch (err) {
+      console.error("Lỗi khi rời kênh:", err);
+      alert("Không thể rời kênh.");
+    }
+  };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -167,7 +169,7 @@ export default function ChannelChat() {
     };
 
     try {
-      const res = await axios.post(`http://localhost:5001/api/channels/message`, payload);
+      const res = await axios.post(`${SERVER_URL}/api/channels/message`, payload);
       setMessages((prev) => [...prev, res.data.message]);
       socket.current.emit("send-channel-message", {
         channelId,
@@ -181,9 +183,8 @@ export default function ChannelChat() {
   };
 
   const handleBack = () => {
-    navigate('/');  // Navigate back to the main chat page
+    navigate('/');
   };
-
   return (
     <Grid>
       <LeftSidebar>
